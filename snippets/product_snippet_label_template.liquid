@@ -1,0 +1,14 @@
+{% unless shop.wholesale_enabled %}
+  <a
+    class="product_snippet__label"
+    label-type="${data.available?'save':'sold_out'}"
+    spz-href="${min_price_variant_href}"
+    spz-if="${!data.available||has_save_label}"
+  >
+    ${
+      data.available
+        ? {% include 'product_discount_label_content_template', product_or_variant: 'data' %}
+        : {{'i18n.products.product.sold_out' | t | json}}
+    }
+  </a>
+{% endunless %}

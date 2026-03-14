@@ -1,0 +1,39 @@
+{% if search_style == 'search_box' %}
+  <style>
+    .header__search_lightbox{
+      height: 100vh;
+      position: absolute !important;
+      top: 100% !important;
+      bottom: unset !important;
+      align-items: flex-start !important;
+      z-index: 20 !important;
+      pointer-events: none !important;
+      max-height: calc(var(--window-height) - var(--header-height));
+    }
+    .header__search_lightbox + .i-spzhtml-lightbox-mask{
+      pointer-events: auto !important;
+      z-index: 19 !important;
+    }
+    .header__search_lightbox .header__search_lightbox_container{
+      pointer-events: auto;
+      width: 100%;
+      max-height: 100%;
+      overflow: hidden auto;
+    }
+    .header__search_lightbox .header__search_predictive_render{
+      width: 100%;
+      height: auto !important;
+    }
+    @media (min-width: 960px) {
+      .header_scroll .header__search_lightbox{
+        top: calc(100% - var(--header-scroll-hide-height-pc)) !important;
+        max-height: calc(var(--window-height) - var(--header-height) + var(--header-scroll-hide-height-pc));
+      }
+    }
+  </style>
+  <spz-lightbox id="header_search_lightbox" class="header__search_lightbox" layout="nodisplay" unclose-in-focus>
+    <div class="header__search_lightbox_container">
+      {% include 'header_search_predictive', media: media, render_id_suffix: '-lightbox' %}
+    </div>
+  </spz-lightbox>
+{% endif %}

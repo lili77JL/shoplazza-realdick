@@ -1,0 +1,182 @@
+<template id="product-snippet-template">
+  <div>
+    ${(function(){
+      const get_random_six_digits = () => {
+        return Math.random().toString().slice(-6)
+      };
+      const wholesale_enabled = {{shop.wholesale_enabled | default: false}};
+      const setting_product_image_display = {{settings.product_image_display | json}};
+      const product_image = data.image;
+      const secondary_image = data.secondImage;
+      const image_width = product_image.width;
+      let image_height = product_image.height;
+      if(setting_product_image_display == '100%'){
+        image_height = image_width
+      }else if(setting_product_image_display == '133.33%'){
+        image_height = image_width * 1.3333;
+      };
+      const product_image_hover_on = {{settings.product_image_hover_on | default: false}} && !!secondary_image.src;
+      const has_save_label = {{settings.product_label_discount_on | default: false}} && ((+data.compare_at_price) > (+data.price));
+      const is_single_variant = data.variants.length == 1;
+      const min_price_variant_href = (data.min_price_variant && data.min_price_variant.available) ? data.min_price_variant.withinUrl : data.withinUrl;
+      const retail_price_max = data.retail_price_max || data.compare_at_price_max;
+      const THUMBNAILS_MAX_SIZE = 3;
+      const thumbnails = data.thumbVariants.slice(0, THUMBNAILS_MAX_SIZE);
+      const image_wrap_id = 'image_wrap_' + get_random_six_digits();
+      const image_carousel_id = 'image_carousel_' + get_random_six_digits();
+      const thumbnails_selector_id = 'thumbnails_selector_' + get_random_six_digits();
+      const form_id = 'form_' + get_random_six_digits();
+      const mixed_wholesale = data.mixed_wholesale;
+      return `
+        <div class="product-snippet__img-wrapper relative" id="${image_wrap_id}">
+          {% comment %} image {% endcomment %}
+          <a
+            class="product-snippet__img-link relative block overflow-hidden"
+            spz-href="${data.withinUrl}"
+            ${product_image_hover_on?"has-secondary-image":""}
+          >
+            <spz-img
+              class="product-snippet__img product-snippet__img_main"
+              layout="responsive"
+              width="${image_width}"
+              height="${image_height}"
+              src="${product_image.src}"
+              alt="${product_image.alt}"
+              object-fit="cover"
+              auto-fit
+            ></spz-img>
+            {% if settings.product_swatches_collection_on %}
+              <spz-carousel
+                class="product-snippet__img product-snippet__img_carousel"
+                id="${image_carousel_id}"
+                layout="responsive"
+                width="${image_width}"
+                height="${image_height}"
+                initial-slide="0"
+                slide
+                effect="fade"
+                spz-if="${thumbnails.length>0}"
+              >
+                <spz-img
+                  spz-if="!!item.image"
+                  layout="responsive"
+                  width="${image_width}"
+                  height="${image_height}"
+                  src="${item.image && item.image.src || ''}"
+                  alt="${item.image && item.image.alt || ''}"
+                  object-fit="cover"
+                  auto-fit
+                  spz-for="(item, index) in thumbnails"
+                  key="index"
+                ></spz-img>
+              </spz-carousel>
+            {% endif %}
+            <spz-img
+              class="product-snippet__img-secondary absolute top-0"
+              layout="responsive"
+              width="${image_width}"
+              height="${image_height}"
+              src="${secondary_image.src || ''}"
+              alt="${secondary_image.alt}"
+              object-fit="cover"
+              auto-fit
+            ></spz-img>
+          </a>
+          {% comment %} quick shop icon {% endcomment %}
+          {% if settings.product_quick_view_on and settings.quick_shop_style == 'icon' %}
+            <button
+              type="button"
+              class="product-snippet__quick-shop-icon"
+              data-track-product-id="${data.id}"
+              data-track-position="{{track_position}}"
+              data-track="quick_shop"
+              @tap="quick-shop.open;quick-shop-render.render(src='{{ routes.root_url }}api/products/${data.id}');"
+              spz-if="${data.available && !(!wholesale_enabled && is_single_variant)}"
+            >
+              {% include 'icon_quickview' %}
+            </button>
+            {% capture icon_quickview %}{% include 'icon_quickview' %}{% endcapture %}
+            {% include 'product_snippet_atc_single', button_class: 'product-snippet__quick-shop-icon', button_content: icon_quickview, attr: 'spz-if="${data.available && !wholesale_enabled && is_single_variant}"', card_product: '' %}
+          {% endif %}
+          {% comment %} label {% endcomment %}
+          {% include 'product_snippet_label_template' %}
+        </div>
+        {% comment %} mixed wholesale label {% endcomment %}
+        <div spz-if="${mixed_wholesale}">
+          {%  capture wrap_id %}${image_wrap_id}{% endcapture %}
+          {% include 'mixed_wholesale_label', class: "mt-2 lg:mt-3", key: wrap_id %}
+        </div>
+        {% comment %} title {% endcomment %}
+        <h3
+          class="product-snippet__title dj_skin_product_list_title m-0 mt-2 p-0 body-base leading-1.25 type-heading-font-family product-title-color {% if settings.hide_mobile_product_title %} md:hidden {% endif %} {% if settings.product_title_style == 'one_line' %} line-clamp-1 {% endif %}">
+          <a class="text-inherit no-underline" spz-href="${data.withinUrl}">
+            ${data.title}
+          </a>
+        </h3>
+        {% comment %} price {% endcomment %}
+        <a
+          class="product-snippet__price-wrapper flex items-center flex-wrap mt-2 text-inherit no-underline"
+          spz-href="${min_price_variant_href}"
+          {% if shop.wholesale_enabled %}wholesale-enabled{% endif %}
+        >
+          {% if shop.wholesale_enabled %} {% comment %} wholesale{% endcomment %}
+            <div class="product-snippet__price inline-flex flex-wrap overflow-hidden">
+              <spz-currency value="${data.price_min}" layout="container"></spz-currency>
+              <span spz-if="${+data.price_min<+data.price_max}" >-</span>
+              <spz-currency value="${data.price_max}" layout="container" spz-if="${+data.price_min<+data.price_max}"></spz-currency>
+            </div>
+            <span class="product-snippet__compare-at-price flex" spz-if="${+retail_price_max>0}">
+              &nbsp;{{ 'i18n.products.general.retail' | t }}&nbsp;<spz-currency value="${retail_price_max}" layout="container"></spz-currency>
+            </span>
+          {% else %} {% comment %} not wholesale{% endcomment %}
+            <span class="product-snippet__price ${data.price_min != data.price_max ? 'product-snippet__from-price' : ''}">
+              {% capture price_dom %}
+                <spz-currency value="${data.price}" layout="container"></spz-currency>
+              {% endcapture %}
+              ${
+                data.price_min != data.price_max
+                  ? `{{ 'i18n.products.general.from' | t: price: price_dom }}`
+                  : `{{price_dom}}`
+              }
+            </span>
+            <spz-currency class="product-snippet__compare-at-price" value="${data.compare_at_price}" layout="container" spz-if="${+data.compare_at_price>+data.price}"></spz-currency>
+          {% endif %}
+        </a>
+        {% comment %} option thumbnails {% endcomment %}
+        {% if settings.product_swatches_collection_on %}
+          <spz-selector
+            id="${thumbnails_selector_id}"
+            layout="container"
+            class="product-snippet__thumbnails flex items-center flex-wrap mt-2"
+            @mouseover="${thumbnails_selector_id}.toggle(option=event.targetOption,value=true);${image_carousel_id}.goToSlide(index=event.targetOption);${image_wrap_id}.toggleClass(class='show_carousel',force=true)"
+            spz-if="${thumbnails.length>0}"
+          >
+            <a
+              spz-if="!!item.image"
+              class="product-snippet__thumbnails-item flex cursor-pointer"
+              spz-href="${item.withinUrl}"
+              spz-for="(item, index) in thumbnails"
+              key="index"
+              option="${index}"
+            >
+              <spz-img
+                layout="fixed"
+                width="28"
+                height="28"
+                src="${item.image && item.image.src || ''}"
+                alt="${item.image && item.image.alt || ''}"
+                object-fit="cover"
+                auto-fit
+              ></spz-img>
+            </a>
+            <a spz-href="${data.withinUrl}" class="product-snippet__thumbnails-item text-xs text-inherit no-underline" spz-if="${data.remainInvisibleThumbCount>0}">
+              +${data.remainInvisibleThumbCount}
+            </a>
+          </spz-selector>
+        {% endif %}
+        {% comment %} quick shop botton {% endcomment %}
+        {% include 'product_snippet_quick_atc_template' %}
+      `
+    })()}
+  </div>
+</template>

@@ -1,0 +1,11 @@
+<div class="product-info-sales-and-reviews flex items-center flex-wrap mt-2">
+  {% for subblock in block.blocks %}
+    {% assign subtype = subblock.type %}
+    {% if subtype contains '//apps' %}
+      {% render subblock %}
+    {% elsif subtype == 'sales' %}
+      {% capture custom_shoplaza_attributes %}data-editor-block='{"index":"{{outerIndex}}.blocks.{{forloop.index0}}","type":"sales"}'{% endcapture %}
+      {% include 'product_info_sales', item: subblock, custom_shoplaza_attributes: custom_shoplaza_attributes %}
+    {% endif %}
+  {% endfor %}
+</div>

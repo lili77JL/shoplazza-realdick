@@ -1,0 +1,31 @@
+<div class="page-container my-14">
+  {% if page.title %}<h3 class="type-heading-font-family text-8 m-0 text-center color-heading">{{ page.title | escape }}</h3>{% endif %}
+  {% if page.content %}<div class="mce-content mt-10 break-words">{{ page.content | spz_img }}</div>{% endif %}
+</div>
+{% schema %}
+{
+  "name": "page_detail",
+  "templates": ["page"],
+  "limit": 1,
+  "settings": [],
+  "presets": [
+    {
+      "name": "page_detail",
+      "cname": {
+        "zh-CN": "自定义页面",
+        "en-US": "Custom page"
+      },
+      "category": {
+        "en-US": "Page",
+        "zh-CN": "页面"
+      },
+      "ccategory": {
+        "en-US": "Page",
+        "zh-CN": "页面"
+      },
+      "display": true,
+      "blocks": []
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,71 @@
+<style>
+  .filter-result-container[no-data] {
+    display: none;
+  }
+
+  .filter-result-container spz-render {
+    height: auto !important;
+  }
+
+  .filter-result-item {
+    margin: 10px 12px 0 0;
+    padding: 7px 12px;
+    font-size: 13px;
+    line-height: 16px;
+    border-radius: 4px;
+    border: 1px solid #e3e3e4;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 200ms cubic-bezier(0.455, 0.03, 0.515, 0.955);
+  }
+
+  .filter-result-item[clear] {
+    padding: 9px 20px;
+  }
+
+  .filter-result-item svg {
+    margin-left: 16px;
+  }
+
+  @media (max-width: {{ settings.breakpoint }}px) {
+    .filter-result-item:active {
+      color: var(--color-primary-btn-bg);
+      background-color: var(--color-primary-btn-bg-5);
+    }
+  }
+
+  @media (min-width: {{ settings.breakpoint }}px) {
+    .filter-result-item:hover {
+      color: var(--color-primary-btn-bg);
+      border-color: var(--color-primary-btn-bg);
+      background-color: var(--color-primary-btn-bg-5);
+    }
+  }
+</style>
+
+<div id='{{id}}' class='filter-result-container flex flex-wrap items-center {{ class }}' hidden>
+  <spz-render as='default' manual layout='container'>
+    <template>
+      <div class='filter_result_item flex items-center cursor-pointer mr-3' role='delete'>
+        <span>${data.label}</span>
+        {% include 'icon_close_small', icon_class: 'flex-shrink-0 cursor-pointer ml-3' %}
+      </div>
+    </template>
+  </spz-render>
+
+  <spz-render as='price' manual layout='container'>
+    <template>
+      <div class='filter_result_item mr-3' spz-if='${!(data.gte == 0 && data.lte == -1)}' role='delete'>
+        <div class='filter-result-item-price flex items-center body-minus-1 cursor-pointer'>
+          <span spz-if='${data.gte !== 0 && data.lte === -1}'>{{ 'i18n.collection.collection_detail.more_than' | t }}</span>
+          <spz-currency class='inline-block' value='${data.gte || 0}' layout='container'></spz-currency>
+          <span spz-if='${!!data.lte && data.lte !== -1}'>-</span>
+          <spz-currency class='inline-block' value='${data.lte}' spz-if='${!!data.lte && data.lte !== -1}' layout='container'></spz-currency>
+          {% include 'icon_close_small', icon_class: 'flex-shrink-0 cursor-pointer ml-3' %}
+        </div>
+      </div>
+    </template>
+  </spz-render>
+
+  <div class='filter-result-clear-all-btn body-plus-2 underline cursor-pointer' role='clearAll'>{{ 'i18n.collection.collection_detail.clear_all' | t }}</div>
+</div>

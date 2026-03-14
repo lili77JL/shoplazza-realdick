@@ -1,0 +1,28 @@
+{% assign share_title = product.title %}
+{% assign share_permalink = product.url %}
+{% assign share_image = product.image.src %}
+{% assign share_icon_class = 'text-current no-underline flex justify-center items-center dj_skin_text' %}
+
+<div {{block.shoplaza_attributes}} class="product-info__social-sharing mt-5 md:hidden">
+  <div class="text-xs leading-[1.7]">{{ 'i18n.product.product_detail.share_the_love' | t }}</div>
+  <div class="product-info__social-sharing-wrapper flex items-center">
+    <a target="_blank"
+      data-track="social_share"
+      href="//www.facebook.com/sharer.php?u={{ shop.url | append: share_permalink }}"
+      class="{{share_icon_class}} share-facebook ">
+      {% include 'icon_sharing_facebook', icon_width:"20px", icon_height:"20px" %}
+    </a>
+    <a target="_blank"
+      data-track="social_share"
+      href="//twitter.com/share?text={{ share_title | url_param_escape }}&amp;url={{ shop.url | append: share_permalink }}"
+      class="{{share_icon_class}} share-twitter">
+      {% include 'icon_sharing_twitter', icon_width:"20px", icon_height:"20px" %}
+    </a>
+    <a target="_blank"
+      data-track="social_share"
+      href="//pinterest.com/pin/create/button/?url={{ shop.url | append: share_permalink }}&amp;media={{ share_image | img_url: '1024x1024' }}&amp;description={{ share_title | url_param_escape }}"
+      class="{{share_icon_class}} share-pinterest">
+      {% include 'icon_sharing_pinterest', icon_width:"20px", icon_height:"20px" %}
+    </a>
+  </div>
+</div>

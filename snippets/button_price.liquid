@@ -1,0 +1,42 @@
+<style>
+  .product_price_before::before {
+    content: ' - ';
+    display: block;
+    width: 20px;
+  }
+</style>
+<template id="{{button_price_id}}">
+  ${function(){
+    const wholesale_enabled = {{shop.wholesale_enabled}};
+    const qty = data.quantity || 1;
+    {% comment %} 多变体商品-当前选择变体 {% endcomment %}
+    const currentSelectVariant = data.variant;
+    {% comment %} 无变体商品异步-默认变体数据 {% endcomment %}
+    const defaultVariant = (data.product && data.product.variants && data.product.variants[0]);
+    {% comment %} 无变体商品商详页同步-默认变体数据 {% endcomment %}
+    const productVariant = {{productSelectedVariant | json}};
+
+    const variantData = currentSelectVariant || defaultVariant || productVariant;
+    const wholesale_price = variantData.wholesale_price || [];
+
+    if(wholesale_enabled && wholesale_price.length > 0) {
+      let wholesaleIndex = wholesale_price.findIndex(item => {
+        return item.min_quantity > qty;
+      });
+      if(wholesaleIndex < 0){
+        wholesaleIndex = wholesale_price.length - 1;
+      }else if(wholesaleIndex > 0){
+        wholesaleIndex = wholesaleIndex - 1;
+      }
+      const wholesalePrice = wholesale_price[wholesaleIndex] || '';
+      return `
+        <div class="flex">
+          <span class="product_price_before"></span><spz-currency value="${wholesalePrice.price}" layout="container"></spz-currency>
+        </div>
+      `
+    }else {
+      const price = variantData && variantData.price;
+      return price != undefined ? `<div class="flex"><span class="product_price_before"></span><spz-currency value="${price}" layout="container"></spz-currency></div>` : '<span></span>';
+    }
+  }()}
+</template>

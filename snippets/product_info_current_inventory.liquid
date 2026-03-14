@@ -1,0 +1,27 @@
+{%- comment -%} 当前库存量 {%- endcomment -%}
+{% assign minimum_inventory = item.settings.minimum_inventory %}
+{% assign maximum_inventory = item.settings.maximum_inventory %}
+{% assign custom_text = item.settings.custom_text %}
+
+{% if product.available and minimum_inventory and maximum_inventory and minimum_inventory >= 0 and maximum_inventory >= 0 and minimum_inventory < maximum_inventory %}
+  <spz-render id="product-info-current-inventory-render" layout="container" {{ block.shoplaza_attributes }}>
+    <template>
+      ${function() {
+        const minInventory = parseInt('{{ minimum_inventory | default: 0 }}');
+        const maxInventory = parseInt('{{ maximum_inventory | default: 0 }}');
+        const randomInventory = Math.round(Math.random() * (maxInventory - minInventory)) + minInventory;
+        const customText = {{ custom_text | json }}.replace(/\{stock\}/g, '<b class="color-price">' + randomInventory + '</b>');
+        const barWidth = (randomInventory / maxInventory) * 100 + '%';
+
+        return `
+          <div class="product-info__current-inventory mt-4 lg:mt-5">
+            <div class="product-info-inventory-text break-all md:body-minus-2 leading-1.2">${customText}</div>
+            <div class="product-info-inventory-progress relative rounded-[1px] overflow-hidden">
+              <div class="product-info-inventory-progress-bar absolute top-0 left-0 h-full w-0" style="width: ${barWidth}"></div>
+            </div>
+          </div>
+        `;
+      }()}
+    </template>
+  </spz-render>
+{% endif %}

@@ -1,0 +1,190 @@
+<style>
+  .header__desktop .header__menu{
+    background: inherit !important;
+  }
+  .header__desktop .header__menu-item{
+    padding: 0 18px;
+    font-size: var(--type-nav-font-size);
+  }
+  .header__desktop .header__menu-item:first-child {
+    {% if shop.locale == "ar-SA" %}
+      margin-right: 0;
+    {% else %}
+      margin-left: 0;
+    {% endif %}
+  }
+  .header__second_menu-wrapper,
+  .header__three_menu-wrapper,
+  .header__more_menu-wrapper{
+    z-index: var(--z-index-sticky);
+    visibility: hidden;
+  }
+  .header__menu-item-first:hover .header__second_menu-wrapper,
+  .header__menu-item-first:hover .header__three_menu-wrapper,
+  .header__menu-item-first:hover .header__more_menu-wrapper{
+    visibility: visible;
+  }
+  .header__second_menu-wrapper,
+  .header__three_menu-wrapper,
+  .header__more_menu_three{
+    overflow: hidden auto;
+    max-height: calc(var(--window-height) - var(--header-height) - 200px);
+  }
+  .header__second_menu-wrapper{
+    min-width: 180px;
+    max-width: 400px;
+    margin: 0 0 -18px 0;
+    padding: 25px 18px;
+    {% if settings.edges == 'round' %}
+      border-radius: 0 0 6px 6px;
+    {% endif %}
+  }
+  .header__second_menu-wrapper li + li{
+    margin-top: 18px;
+  }
+  .header__three_menu-content{
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin: 0 -30px;
+  }
+  .header__desktop .header__menu-item[data-levels="2"] .header__three_menu-wrapper ul{
+    flex-wrap: wrap;
+    margin-top: -50px;
+  }
+  .header__desktop .header__menu-item:not([data-levels="2"]) .header__three_menu-wrapper ul{
+    flex-direction: column;
+    margin-top: -12px;
+  }
+  .header__desktop .header__menu-item[data-levels="2"][data-has-product] .header__three_menu-wrapper ul li{
+    width: 33.33%;
+  }
+  .header__desktop .header__menu-item[data-levels="2"]:not([data-has-product]) .header__three_menu-wrapper ul li{
+    width: 25%;
+  }
+  .header__desktop .header__menu-item[data-has-product] .header__three_menu-wrapper ul{
+    grid-column: span 3 / span 3;
+  }
+  .header__desktop .header__menu-item:not([data-has-product]) .header__three_menu-wrapper ul{
+    grid-column: span 4 / span 4;
+  }
+  .header__desktop .header__menu-item[data-levels="2"] .header__menu-item-second{
+    padding: 0 30px;
+    font-size: var(--type-nav-font-size);
+    color: var(--color-header-text);
+  }
+  .header__desktop .header__menu-item[data-levels="2"] .header__menu-item-second-wrapper {
+    margin-top: 50px;
+    margin-bottom: 8px;
+  }
+  .header__three_menu-wrapper .header__menu-item-last{
+    padding: 12px 30px 0;
+  }
+  .header__desktop .header__menu-item .header__menu-item-last{
+    color: var(--color-header-text-70);
+    font-size: calc(var(--type-nav-font-size) - 2px);
+    line-height: 1.4;
+  }
+  .header__desktop .header__menu-item .header__menu-item-last:hover {
+    color: var(--color-header-text);
+  }
+  .header__menu_product{
+    grid-column: span 1 / span 1;
+    padding-left: 30px;
+    padding-right: 30px;
+  }
+  .header_menu_hover_animation{
+    opacity: 0;
+    transform: translateY(-12px);
+    transition: all 200ms;
+  }
+  .header__desktop .header__menu-item-first:first-child {
+    padding-left: 0;
+  }
+  .header__menu-item-first:hover .header_menu_hover_animation{
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .header__desktop .header__menu-item-first .header__menu-item-sub::after{
+    content: "";
+    position: absolute;
+    {% if shop.locale == "ar-SA" %}
+      right: 0;
+    {% else %}
+      left: 0;
+    {% endif %}
+    bottom: 0;
+    display: block;
+    width: 0;
+    height: 3px;
+    background-color: var(--color-header-text);
+    transition: width .2s;
+	}
+	.header__desktop .header__menu-item-first:hover .header__menu-item-sub::after{
+		width: 100%;
+	}
+  .header__waterfall-wrapper {
+    margin: 0 -30px;
+    margin-top: -50px;
+  }
+  .header__waterfall-wrapper.grid-menu-list {
+    grid-auto-rows: max-content;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .menu_has_product .header-menu-full-screen-content {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .menu_has_product .header__waterfall-wrapper {
+    grid-column: span 3 / span 3;
+  }
+  .menu_has_product .header__menu_product {
+    grid-column: span 1 / span 1;
+  }
+</style>
+
+{% capture firstLinksAfterFormat %}
+  {% render 'header_menu_data_format' %}
+{% endcapture %}
+
+{% assign firstLinksAfterFormat = firstLinksAfterFormat | parse_json %}
+
+<spz-menu 
+  id="header-menu-{{ suffix_id }}" 
+  layout="container" 
+  class="header-menu-container {% if nav_text_uppercase %} uppercase {% endif %} {% if type_nav_same_with == 'heading' %} type-heading-font-family {% endif %}" 
+>
+  <ul class="header__menu flex m-0 p-0 list-none">
+
+    {% for first_link in firstLinksAfterFormat %}
+      {% assign second_links = first_link.secondLinks %}
+      {% assign levels = first_link.levels %}
+      {% assign hasThirdMenu = first_link.hasThirdMenu %}
+      {% assign secondLinks = first_link.secondLinks %}
+
+      {% assign product0 = first_link.product0 %}
+
+      <li class="header__menu-item header__menu-item-first cursor-pointer header__menu-item-first-{{ forloop.index }}" data-id="{{ first_link.id }}" {% if product0.id %} data-has-product {% endif %} data-levels="{{ levels }}">
+          {% assign first_link_title = first_link.title %}
+
+          {% 
+            render 'header_menu_title',
+            link: first_link,
+            linkWrapperClass: 'header__menu-item-sub relative block text-inherit no-underline whitespace-nowrap flex items-start',
+            commonTextClass: '',
+            titleClass: '',
+            linkAttrs: '',
+            tagClass:"header__menu-item-tag inline-block leading-none",
+            topChildrens: '',
+            isWrapperChildren: false,
+          %}
+
+          {% if secondLinks %}
+            {% render 'header_menu_texts', link: first_link, index: forloop.index %}
+          {% endif %}
+      </li>
+    {% endfor %}
+
+    {% render 'header_menu_more_link', links: firstLinksAfterFormat %}
+   
+  </ul>
+</spz-menu>

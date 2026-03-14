@@ -1,0 +1,33 @@
+{% assign pc_top = settings.spacing.pc.top | default: 0 %}
+{% assign pc_bottom = settings.spacing.pc.bottom | default: 0 %}
+{% assign pc_left = settings.spacing.pc.left | default: 0 %}
+{% assign pc_right = settings.spacing.pc.right | default: 0 %}
+{% assign mobile_top = settings.spacing.mobile.top | default: pc_top %}
+{% assign mobile_bottom = settings.spacing.mobile.bottom | default: pc_bottom %}
+{% assign mobile_left = settings.spacing.mobile.left | default: pc_left %}
+{% assign mobile_right = settings.spacing.mobile.right | default: pc_right %}
+
+<style>
+  {% if settings.width and settings.custom_max_width_on == false %}
+    .page_container {
+      max-width: {{ settings.width }}{{ settings.width_units }};
+      margin: 0 auto;
+    }
+  {% endif %}
+
+  .page_container {
+    padding-top: {{ mobile_top }}px;
+    padding-right: {{ mobile_right }}px;
+    padding-bottom: {{ mobile_bottom }}px;
+    padding-left: {{ mobile_left }}px;
+  }
+
+  @media (min-width: 960px) {
+    .page_container {
+      padding-top: {{ pc_top }}px;
+      padding-right: {{ pc_right }}px;
+      padding-bottom: {{ pc_bottom }}px;
+      padding-left: {{ pc_left }}px;
+    }
+  }
+</style>

@@ -1,0 +1,15 @@
+{% assign urlHasFilterParams = false %}
+{% assign querystrings = REQUEST_URI | split: '?' | last | split: '&' %}
+{% assign query = nil %}
+{% for querystring in querystrings %}
+  {% assign pair = querystring | split: '=' %}
+  {% if pair[0] == 'filter.p.vendor' or pair[0] contains 'filter.v.' %}
+    {% assign urlHasFilterParams = true %}
+  {% endif %}
+  {% if pair[0] == 'sort_by' and pair[1] != nil %}
+    {% assign sortByUrlValue = pair[1] %}
+  {% endif %}
+  {% if pair[0] != 'q' and pair[1] != nil %}
+    {% assign query = query | append: '&' | append: querystring %}
+  {% endif %}
+{% endfor %}

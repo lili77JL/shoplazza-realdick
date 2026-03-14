@@ -1,0 +1,49 @@
+<spz-order-shipment class="lg:page-container lg:mt-7" layout="container" order-id="{{ order.id }}" type="{{ ship_type }}">
+    <template>
+      <div class="shipments-container">
+        <div class="shipments-title rounded-global-fixed">
+          {{ title }}
+        </div>
+        <div class="shipments-content">
+          <div spz-for="(item,index) in data.list" class="shipment-package mt-8 rounded-global-fixed lg:mt-6">
+            <div class="shipment-package-header lg:px-8 lg:py-5">
+              <span>{{ generalLang.package }} ${index + 1}</span>
+              <span>${item.shippingStatus}</span>
+            </div>
+      
+            <div class="shipment-package-container pt-5 lg:px-8 lg:py-6">
+              <div class="md:hidden mb-3 text-base break-all" spz-if="!!item.tracking_number">
+                {{ generalLang.tracking_number }} ${item.tracking_number}
+              </div>
+              <div class="md:hidden mb-3 text-base leading-none" spz-if="!!item.tracking_company">
+                {{ generalLang.carrier }} ${item.tracking_company}
+              </div>
+              <div class="md:hidden mb-3 text-base leading-none ">{{ generalLang.products }}</div>
+      
+              ${function() {
+                const products = item.line_items || [];
+                const productCount = products.length || 0;
+                const showStatus = false;
+      
+                let html = '';
+                if (productCount === 1) {
+                  const product = products[0];
+                  html += `{% include 'order_detail_product' %}`;
+                } else if (productCount > 1) {
+                  html += `
+                    <div class="flex flex-wrap">
+                      ${products.map((product) => `{% include 'order_detail_product_image' %}`).join('')}
+                    </div>
+                  `;
+                }
+      
+                html += `{% include 'order_detail_tracking_info' %}`;
+      
+                return html;
+              }()}
+            </div>
+          </div>
+        </div>
+      </div>
+    </template>
+</spz-order-shipment>

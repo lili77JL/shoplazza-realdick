@@ -1,0 +1,6 @@
+{% assign product_tax_included = market.product_tax_included | default: false %}
+{% if product_tax_included %}
+  <span key="product_tax_included" class="leading-1.1 color-compare-price text-xs font-medium {{class}}">
+    {{ 'i18n.customers.my_order.tax_included' | t }}
+  </span>
+{% endif %}

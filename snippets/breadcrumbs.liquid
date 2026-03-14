@@ -1,0 +1,47 @@
+{% comment %} template.type 35 is order details {% endcomment %}
+{% if settings.show_breadcrumbs and template.type != '35' %}
+  {% assign show_breadcrumb_pages = "product, collection, search, cart, page, blog, article, login, register, reset_password, reset_success, addresses, order" | split: ", " %}
+  {% if show_breadcrumb_pages contains template.name %}
+    <style>
+      .breadcrumb{
+        color: #292929;
+      }
+      .breadcrumb_separator,.breadcrumb [has-child]{
+        opacity: 0.6;
+      }
+      .breadcrumb a{
+        color: inherit;
+        text-decoration-line: none;
+      }
+    </style>
+    {% capture separator %}
+      <span class="breadcrumb_separator">&nbsp;/&nbsp;</span>
+    {% endcapture %}
+    <nav class="breadcrumb page-container flex flex-wrap items-center text-xs leading-none pt-4 lg:pt-9 md:mb-4 {% if template.name == 'collection' %} lg:pb-9 {% endif %}}">
+      <a href="{{ routes.root_url }}" has-child>{{'i18n.general.breadcrumbs.home' | t}}</a>{{separator}}
+      {% if template.name == 'product' %}
+        {% if collection.id %}
+          <a href="{{collection.url}}" has-child>{{ collection.title | escape }}</a>{{separator}}
+        {% endif %}
+        <a href="javascript:;">{{ product.title | escape }}</a>
+      {% elsif template.name == 'collection' %}
+        <a href="javascript:;">{{ collection.title | escape }}</a>
+      {% elsif template.name == 'search' %}
+        <a href="javascript:;">{{'i18n.general.breadcrumbs.search' | t}}</a>
+      {% elsif template.name == 'cart' %}
+        <a href="javascript:;">{{'i18n.general.breadcrumbs.cart' | t}}</a>
+      {% elsif template.name == 'page' %}
+        <a href="javascript:;">{{ page.title | escape }}</a>
+      {% elsif template.name == 'blog' %}
+        <a href="javascript:;">{{ blog.title | escape }}</a>
+      {% elsif template.name == 'article' %}
+        {% if blog.id %}
+          <a href="{{blog.url}}" has-child>{{ blog.title | escape }}</a>{{separator}}
+        {% endif %}
+        <a href="javascript:;">{{ article.title | escape }}</a>
+      {% elsif template.name == 'login' or template.name == 'register' or template.name == 'reset_password' or template.name == 'reset_success' or template.name == 'addresses' or template.name == 'order' %}
+        <a href="javascript:;">{{ 'i18n.general.breadcrumbs.my_account' | t}}</a>
+      {% endif %}
+    </nav>
+  {% endif %}
+{% endif %}

@@ -1,0 +1,28 @@
+{% comment %}
+  Renders a product discount label content template
+
+  Template Accepts:
+  - product_or_variant: {Object} Product object or Variant object
+
+  Usage:
+  {% include 'product_discount_label_content_template', product_or_variant: 'data' %}
+{% endcomment %}
+
+{% if settings.product_label_discount_on %}
+  {% if settings.product_label_discount_format == 'percentage' %}
+    {% capture saved_amount %}
+      ${ {{product_or_variant}}.off_ratio }%
+    {% endcapture %}
+  {% elsif settings.product_label_discount_format == 'amount' %}
+    {% capture saved_amount %}
+      <spz-currency value="${ {{product_or_variant}}.compare_at_price-{{product_or_variant}}.price }" layout="container"></spz-currency>
+    {% endcapture %}
+  {% endif %}
+  `${
+    (+data.compare_at_price > +data.price)
+     ? `{{'i18n.products.general.save' | t: save_amount: saved_amount }}`
+     : ''
+  }`
+{% else %}
+  ``
+{% endif %}

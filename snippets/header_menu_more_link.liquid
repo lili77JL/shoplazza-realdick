@@ -1,0 +1,282 @@
+
+{% comment %} more link {% endcomment %}
+<style>
+    .header-menu-container[finish] .header__more_menu-wrapper {
+      display: block !important;
+      position: static !important;
+    }
+    .header__more_menu {
+      display: grid;
+    }
+    .header__more_menu {
+      grid-template-columns: repeat(4,minmax(0,1fr));
+    }
+
+    .header__more_menu_right {
+      grid-column: span 3/span 3;
+      grid-template-columns: repeat(3,minmax(0,1fr));
+    }
+
+    .header__more_menu [role="tabs"],
+    .header__more_menu_right .header__menu_product {
+      grid-column: span 1/span 1;
+    }
+
+    .header__more_menu_right .menu_list_wrapper[data-has-product] {
+      grid-column: span 2/span 2;
+    }
+
+    .header__more_menu [role="tabpanel"],
+    .header__more_menu_right .menu_list_wrapper {
+      grid-column: span 3/span 3;
+    }
+
+    .header__more_menu {
+      line-height: 1.25;
+      padding-top: 32px;
+      padding-bottom: 36px;
+    }
+    .header__more_menu [role="tab"] + [role="tab"] {
+      padding-top: 20px;
+    }
+    .header__more_menu_icon {
+      {% if shop.locale == "ar-SA" %}
+        transform: rotate(-180deg);
+      {% else %}
+        transform: rotate(180deg);
+      {% endif %}
+      transition: all 200ms;
+    }
+    .header__more_menu [role="tab"][active] .header__more_menu_icon {
+      transform: rotate(0);
+    }
+    .header__more_menu_right li {
+      padding-bottom: 20px;
+    }
+    .header__more_menu_right {
+      margin-top: -50px;
+    }
+    .grid_gap_ele {
+      height: 50px;
+      margin: 0;
+    }
+    .header__more_menu_right:not(.grid_gap_ele) {
+      margin-top: 0;
+    }
+    .header__more_menu_right_item {
+      padding: 0 30px 8px;
+    }
+    .header__more_menu_right_item + .header__more_menu_right_item {
+      padding: 12px 30px 0;
+    }
+    .header__more_menu_right .header__menu_product {
+      padding: 0 30px;
+    }
+    .header__more_menu_right.has_third_menu {
+      margin-top: -50px;
+    }
+    .header__more_menu_right.has_third_menu .header__menu_product {
+      margin-top: 50px;
+    }
+    .header__more_menu_right spz-product-snippet {
+      height: 100%;
+    }
+    .header__more_menu_right .grid-col-list {
+      grid-auto-rows: min-content;
+    }
+</style>
+  
+<li spz-menu-more-link class="header__menu-item header__menu-item-first">
+    <a class="header__menu-item-sub relative block text-inherit no-underline whitespace-nowrap cursor-pointer" href="javascript:;" >{{ 'i18n.navigation.general.more_links' | t }}</a>
+    <div class="header__more_menu-wrapper" spz-menu-submenu 
+    ></div>
+</li>
+
+{% assign linkHasChildList = '[' %}
+
+{% for firstLink in firstLinksAfterFormat %}
+  {% assign hasProduct = false %}
+  {% if firstLink.product0 %} {% assign hasProduct = true %} {% endif %}
+  {% assign hasChild = false %}
+  {% if firstLink.secondLinks %} {% assign hasChild = true %} {% endif %}
+
+  {% assign isFullScreen = false %}
+  {% if hasProduct or hasChild %} {% assign isFullScreen = true %} {% endif %}
+
+  {% assign isFullScreen = isFullScreen | json %}
+
+  {% if forloop.index == 1 %}
+    {% assign linkHasChildList = linkHasChildList | append: isFullScreen %}
+  {% else %}
+    {% assign linkHasChildList = linkHasChildList | append: ',' | append: isFullScreen %}
+  {% endif %}
+{% endfor %}
+
+{% assign linkHasChildList = linkHasChildList | append: ']' %}   
+
+<template id="more-link-template">
+    ${(function(){
+
+        var linkList ={{ linkHasChildList }}.slice(offset); 
+        var hasChild = linkList.some(v => v);
+
+        if(!hasChild){ 
+            return `
+                <div>
+                    <ul class="header__more_menu_second header__second_menu-wrapper header-shadow absolute header-bg list-none overflow-x-hidden overflow-y-auto">
+                        {% for firstLink in firstLinksAfterFormat %}
+                            <li class="header_menu_hover_animation"  spz-if="${offset+1<={{ forloop.index }}}">
+                                {% 
+                                    render 'header_menu_title',
+                                    link: firstLink,
+                                    linkWrapperClass: 'header__menu-item-last flex items-start text-inherit no-underline',
+                                    commonTextClass: '',
+                                    titleClass: '',
+                                    linkAttrs: '',
+                                    tagClass:"header__menu-item-tag",
+                                    topChildrens: '',
+                                    isWrapperChildren: false,
+                                  %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            `
+        }
+
+        return `
+          <div>
+            <div class="header__more_menu_three header-shadow absolute left-0 right-0 header-bg overflow-x-hidden overflow-y-auto">
+              <spz-tabs class="header__more_menu page-container" layout="container" interact="hover" >
+                <ul class="header__more_menu_left header_menu_hover_animation list-none" role="tabs" 
+                >
+                    {% for firstLink in firstLinksAfterFormat %}
+                        {% assign secondLinks = firstLink.secondLinks %}
+                        <li 
+                            role="tab" 
+                            data-panel="tab-{{firstLink.id}}" 
+                            spz-if="${offset+1<={{ forloop.index }}}"
+                        >
+                            {% capture iconArrow %}
+                                {% if secondLinks %}
+                                    <i class="flex">
+                                        {% include 'icon_left', icon_class: 'header__more_menu_icon' %}
+                                    </i>
+                                {% endif %} 
+                            {% endcapture %}
+                            {% 
+                                render 'header_menu_title',
+                                link: firstLink,
+                                linkWrapperClass: 'flex items-start text-inherit no-underline',
+                                commonTextClass: '',
+                                titleClass: 'flex-1 mr-4',
+                                linkAttrs: '',
+                                tagClass:"header__menu-item-tag",
+                                topChildrens: '',
+                                isWrapperChildren: false,
+                                bottomChildren: iconArrow
+                              %}
+                        </li>
+                    {% endfor %}
+                </ul>
+
+                {% for firstLink in firstLinksAfterFormat %}
+                    {% assign secondLinks = firstLink.secondLinks %}
+                    {% assign product0 = firstLink.product0 %}
+
+                    {% capture list_content %}
+                        {% for secondLink in secondLinks %}
+                            {% assign thirdLinks = secondLink.thirdLinks %}
+
+                            {% assign linkWrapperClass =  'header__more_menu_right_item  flex items-start text-inherit no-underline ' %}
+                            {% assign titleClass =  'flex-1 mr-4' %}
+
+                            {% assign thirdLinkWrapperClass  = linkWrapperClass | append: "header__menu-item-last"%}
+
+                            {% unless firstLink.hasThirdMenu %}
+                                {% assign linkWrapperClass = thirdLinkWrapperClass %}
+                                {% assign titleClass =  '' %}
+                            {% endunless %}
+
+                            {% assign second_index = forloop.index %}
+                            {% assign if_show_gap = firstLink.hasThirdMenu %}
+
+                            <div 
+                                class="{% if firstLink.hasThirdMenu %} flex-1 has-third-menu {% else %} mt-1 {% endif %} header__more_menu_right_item_wrapper"
+                            >
+                                {% if if_show_gap %}
+                                    <p class="grid_gap_ele"></p>
+                                {% endif %}
+
+                                {% 
+                                    render 'header_menu_title',
+                                    link: secondLink,
+                                    linkWrapperClass:linkWrapperClass,
+                                    commonTextClass: '',
+                                    titleClass: titleClass,
+                                    linkAttrs: '',
+                                    tagClass:"header__menu-item-tag",
+                                    topChildrens: '',
+                                    bottomChildren: '',
+                                    isWrapperChildren: false,
+                                %}
+                                {% for thirdLink in thirdLinks %}
+                                    {% 
+                                        render 'header_menu_title',
+                                        link: thirdLink,
+                                        linkWrapperClass: thirdLinkWrapperClass,
+                                        commonTextClass: '',
+                                        titleClass: '',
+                                        linkAttrs: '',
+                                        tagClass:"header__menu-item-tag",
+                                        topChildrens: '',
+                                        bottomChildren: '',
+                                        isWrapperChildren: false
+                                    %}
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+                    {% endcapture %}
+
+                    {% capture list_wrapper %}
+                        {% if firstLink.hasThirdMenu %}
+                            <spz-list 
+                                layout="container"
+                                type="grid"
+                                column-count="{% if firstLink.product0 %} 2 {% else %} 3 {% endif %}"
+                                list="list"
+                                class="flex flex-wrap list-none w-full grid-col-list menu_list_wrapper  " 
+                                {% if firstLink.product0 %} data-has-product {% endif %}
+                            >
+                                {{ list_content }}
+                            </spz-list>
+                        {% else %}
+                            <ul class="flex flex-col list-none w-full menu_list_wrapper  " 
+                              {% if firstLink.product0 %} data-has-product {% endif %}
+                            >
+                              {{ list_content }}
+                            </ul>
+                        {% endif %}
+                    {% endcapture %}
+  
+                    <div 
+                        class="header__more_menu_right header_menu_hover_animation grid  {% if firstLink.hasThirdMenu %} mt--12.5  has_third_menu {% endif %}" 
+                        role="tabpanel" 
+                        data-id="tab-{{ firstLink.id }}" 
+                        spz-if="${offset+1<={{ forloop.index }}}"
+                    >
+                        {{ list_wrapper }}
+                        {% if firstLink.product0 %}
+                            <div class="header__menu_product">
+                                {% render 'product_snippet', product_id: firstLink.product0.id %}
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+              </spz-tabs>
+            </div>
+          </div>
+        `
+    })()}
+
+</template>

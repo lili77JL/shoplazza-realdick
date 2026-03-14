@@ -1,0 +1,46 @@
+
+{% assign url = link.url %}
+{% assign title = link.title %}
+{% assign menuTag = link.menuTag %}
+{% assign menuTagLabel = menuTag.label | escape %}
+
+{% assign titleClass = titleClass | default: '' %}
+{% assign textClass = textClass | default: '' %}
+{% assign tagClass = tagClass | default: '' %}
+{% assign linkWrapperClass = linkWrapperClass | default: '' %}
+{% assign commonTextClass = commonTextClass | default: '' %}
+{% assign linkAttrs = linkAttrs | default: '' %}
+{% assign bottomChildren = bottomChildren | default: '' %}
+
+{% capture menu_tag_style %}
+  {% if menuTagLabel != "" and menuTagLabel != nil %}
+    color: {{ menuTag.color }}; background-color: {{ menuTag.bg }};
+  {% endif %}
+{% endcapture %}
+
+{% capture childrens %}
+  {{ topChildrens }}
+  <span class="{{ titleClass }}">{{ title }}</span>
+  {% if menuTagLabel %}
+    <span class="{{ tagClass }}" style="{{ menu_tag_style }}">{{ menuTagLabel }}</span>
+  {% endif %}
+  {{ bottomChildren }}
+{% endcapture %}
+
+{% capture wrapperChildren %}
+  <div class="{{ wraperClass }}">
+    {{ childrens }}
+  </div>
+{% endcapture %}
+
+{% capture currentChildren %}
+  {% if isWrapperChildren %}
+    {{ wrapperChildren }}
+  {% else %}
+    {{ childrens }}
+  {% endif %}
+{% endcapture %}
+
+<a class="{{ linkWrapperClass }}" {% render 'link', link: link %} {{ linkAttrs }}>
+  {{ currentChildren }}
+</a>

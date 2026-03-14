@@ -1,0 +1,5 @@
+{% if setting.support_layout != true %}
+  <style spz-boilerplate>body{-webkit-animation:-spz-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-spz-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-spz-start 8s steps(1,end) 0s 1 normal both;animation:-spz-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -spz-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -spz-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -spz-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -spz-start{from{visibility:hidden}to{visibility:visible}}@keyframes -spz-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style spz-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
+{% endif %}
+{{ shop.cdn_domain | append: 'cuttlefish/v1/spz.min.js' | preload_tag: as: 'script', type: 'text/javascript', crossorigin: 'anonymous' }}
+
