@@ -1,0 +1,280 @@
+{% assign pc_per_row = section.settings.pc_per_row %}
+{% assign mb_per_row = section.settings.mb_per_row %}
+{% assign bg_image = section.settings.bg_image %}
+{% include 'card_spacing_css' %}
+
+<style>
+  [data-section-id="{{ section.id }}"] .discover_title {
+    font-size: 24px;
+    text-align: center;
+    margin-bottom: 40px;
+    color: var(--color-general-heading-text);
+    line-height: 1.3;
+    font-weight: 700;
+  }
+
+  [data-section-id="{{ section.id }}"] .discover_grid {
+    display: grid;
+    grid-template-columns: repeat({{ pc_per_row }}, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  [data-section-id="{{ section.id }}"] .discover_item {
+    position: relative;
+    border-radius: 9999px;
+    overflow: hidden;
+    transform: translateZ(0);
+    box-shadow: 0px 10px 14px rgba(220, 13, 111, .3);
+    transition: all .5s;
+  }
+
+  [data-section-id="{{ section.id }}"] .discover_item:hover {
+    box-shadow: none;
+  }
+
+  [data-section-id="{{ section.id }}"] .discover_bg_image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: fill;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  [data-section-id="{{ section.id }}"] .discover_item_content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 19px;
+    font-size: 24px;
+    line-height: 1.2;
+    text-align: center;
+    color: #fff;
+  }
+
+  [data-section-id="{{ section.id }}"] .discover_item_link {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 3;
+    border-radius: 9999px;
+    text-decoration: none;
+  }
+
+  @media (max-width: {{ settings.breakpoint }}px) {
+    [data-section-id="{{ section.id }}"] .discover_title {
+      margin-bottom: 32px;
+    }
+
+    [data-section-id="{{ section.id }}"] .discover_grid {
+      grid-template-columns: repeat({{ mb_per_row }}, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    [data-section-id="{{ section.id }}"] .discover_item {
+      box-shadow: 0px 5px 8px rgba(220, 13, 111, .3);
+    }
+
+    [data-section-id="{{ section.id }}"] .discover_item_content {
+      padding: 0 10px;
+      height: 46px;
+      font-size: 16px;
+    }
+  }
+</style>
+
+<div class="page-container discover_container">
+  {% if section.settings.title != blank %}
+    <div class="discover_title break-words">{{ section.settings.title }}</div>
+  {% endif %}
+  <div class="discover_grid">
+    {% for block in section.blocks %}
+      <div class="discover_item" {{ block.bindSettings }}>
+        {% if bg_image %}
+          <spz-img
+            class="discover_bg_image"
+            layout="fill"
+            src="{{ bg_image | img_url }}"
+            alt=""
+            object-fit="fill"
+          ></spz-img>
+        {% endif %}
+
+        {% if block.settings.link.url != blank %}
+          <a class="discover_item_link" {% include 'link', link: block.settings.link %}></a>
+        {% endif %}
+
+        <div class="discover_item_content">
+          {{ block.settings.text | escape }}
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "discover_section",
+  "max_blocks": 20,
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": {
+        "zh-CN": "标题",
+        "en-US": "Title"
+      },
+      "default": "Discover"
+    },
+    {
+      "type": "image_picker",
+      "id": "bg_image",
+      "label": {
+        "zh-CN": "快捷入口背景图片",
+        "en-US": "Entry background image"
+      },
+      "info": {
+        "zh-CN": "此图片将作为所有快捷入口的背景",
+        "en-US": "This image will be used as background for all entries"
+      }
+    },
+    {
+      "type": "range",
+      "id": "pc_per_row",
+      "label": {
+        "zh-CN": "PC端每行展示个数",
+        "en-US": "Items per row on PC"
+      },
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "mb_per_row",
+      "label": {
+        "zh-CN": "移动端每行展示个数",
+        "en-US": "Items per row on mobile"
+      },
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "spacing",
+      "id": "spacing",
+      "label": {
+        "en-US": "Spacing",
+        "zh-CN": "间距留白"
+      },
+      "pc": {
+        "top": "40",
+        "right": "",
+        "bottom": "40",
+        "left": ""
+      },
+      "mobile": {
+        "top": "20",
+        "right": "",
+        "bottom": "20",
+        "left": ""
+      },
+      "default": {
+        "pc": {
+          "top": "40",
+          "right": "",
+          "bottom": "40",
+          "left": ""
+        },
+        "mobile": {
+          "top": "20",
+          "right": "",
+          "bottom": "20",
+          "left": ""
+        }
+      }
+    }
+  ],
+  "blocks": [
+    {
+      "type": "entry",
+      "name": {
+        "en-US": "Quick entry",
+        "zh-CN": "快捷入口"
+      },
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": {
+            "zh-CN": "文本",
+            "en-US": "Text"
+          },
+          "default": "Entry"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": {
+            "zh-CN": "链接",
+            "en-US": "Link"
+          },
+          "default": ""
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "discover_section",
+      "cname": {
+        "en-US": "Discover section",
+        "zh-CN": "discover section"
+      },
+      "category": {
+        "en-US": "Image with text",
+        "zh-CN": "图文"
+      },
+      "ccategory": {
+        "en-US": "Image with text",
+        "zh-CN": "图文"
+      },
+      "display": true,
+      "blocks": [
+        {
+          "type": "entry",
+          "settings": {
+            "text": "New Arrivals"
+          }
+        },
+        {
+          "type": "entry",
+          "settings": {
+            "text": "Best Sellers"
+          }
+        },
+        {
+          "type": "entry",
+          "settings": {
+            "text": "Sale"
+          }
+        },
+        {
+          "type": "entry",
+          "settings": {
+            "text": "Collections"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
