@@ -1,0 +1,292 @@
+{% include 'card_spacing_css' %}
+{% assign heading = section.settings.heading %}
+{% assign subtitle = section.settings.subtitle %}
+{% assign desktop_per_row = section.settings.desktop_per_row %}
+{% assign mobile_per_row = section.settings.mobile_per_row %}
+
+<style>
+  [data-section-id="{{ section.id }}"] .cls-subtitle {
+    font-size: 14px;
+    color: var(--color-body-text-70, #999);
+    margin: 0 0 4px;
+    text-align: center;
+  }
+  [data-section-id="{{ section.id }}"] .cls-title {
+    font-size: calc(var(--type-heading-font-size) * 0.8);
+    font-weight: 600;
+    margin: 0 0 20px;
+    text-align: center;
+    line-height: 1.2;
+  }
+  [data-section-id="{{ section.id }}"] .cls-grid {
+    display: grid;
+    grid-template-columns: repeat({{ mobile_per_row }}, 1fr);
+    gap: 12px;
+  }
+  @media (min-width: 960px) {
+    [data-section-id="{{ section.id }}"] .cls-grid {
+      grid-template-columns: repeat({{ desktop_per_row }}, 1fr);
+      gap: 16px;
+    }
+    [data-section-id="{{ section.id }}"] .cls-title {
+      margin-bottom: 28px;
+    }
+  }
+  [data-section-id="{{ section.id }}"] .cls-card {
+    position: relative;
+    display: block;
+    width: 100%;
+    padding-bottom: 100%;
+    border-radius: 12px;
+    overflow: hidden;
+    text-decoration: none;
+  }
+  [data-section-id="{{ section.id }}"] .cls-card-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  [data-section-id="{{ section.id }}"] .cls-card-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  [data-section-id="{{ section.id }}"] .cls-card-inner {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  [data-section-id="{{ section.id }}"] .cls-card-label {
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.2;
+    text-align: center;
+    white-space: nowrap;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  }
+  [data-section-id="{{ section.id }}"] .cls-line {
+    height: 3px;
+    background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 50%, rgba(255, 255, 255, 0) 100%);
+  }
+  [data-section-id="{{ section.id }}"] .cls-line-top {
+    margin-bottom: 6px;
+  }
+  [data-section-id="{{ section.id }}"] .cls-line-bottom {
+    margin-top: 6px;
+  }
+</style>
+
+<div class="page-container">
+  {% if subtitle != blank %}
+    <p class="cls-subtitle">{{ subtitle | escape }}</p>
+  {% endif %}
+  {% if heading != blank %}
+    <h2 class="cls-title type-heading-font-family">{{ heading | escape }}</h2>
+  {% endif %}
+
+  {% if section.blocks.size > 0 %}
+    <div class="cls-grid">
+      {% for block in section.blocks %}
+        {% assign block_title = block.settings.title %}
+        {% assign block_image = block.settings.image %}
+        {% assign block_collection = block.settings.collection %}
+        {% assign link_url = block_collection.url | default: '#' %}
+
+        <a class="cls-card" href="{{ link_url }}" {{ block.shoplaza_attributes }}>
+          {% if block_image %}
+            <img class="cls-card-img" src="{{ block_image | img_url: '600x' }}" alt="{{ block_title | escape }}" loading="lazy" />
+          {% else %}
+            <div class="cls-card-img" style="background: #ddd;"></div>
+          {% endif %}
+          {% if block_title != blank %}
+            <div class="cls-card-overlay">
+              <div class="cls-card-inner">
+                <div class="cls-line cls-line-top"></div>
+                <span class="cls-card-label">{{ block_title | escape }}</span>
+                <div class="cls-line cls-line-bottom"></div>
+              </div>
+            </div>
+          {% endif %}
+        </a>
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>
+
+{% schema %}
+{
+  "name": "collection_list_sim",
+  "max_blocks": 20,
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": {
+        "en-US": "Heading",
+        "zh-CN": "标题"
+      },
+      "default": "Shop by Category"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": {
+        "en-US": "Subtitle",
+        "zh-CN": "副标题"
+      },
+      "default": ""
+    },
+    {
+      "type": "range",
+      "id": "desktop_per_row",
+      "label": {
+        "en-US": "Desktop cards per row",
+        "zh-CN": "PC端每行卡片数"
+      },
+      "step": 1,
+      "min": 2,
+      "max": 8,
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "mobile_per_row",
+      "label": {
+        "en-US": "Mobile cards per row",
+        "zh-CN": "移动端每行卡片数"
+      },
+      "step": 1,
+      "min": 1,
+      "max": 4,
+      "default": 2
+    },
+    {
+      "type": "spacing",
+      "id": "spacing",
+      "label": {
+        "en-US": "Spacing",
+        "zh-CN": "间距留白"
+      },
+      "pc": {
+        "top": "40",
+        "right": "",
+        "bottom": "40",
+        "left": ""
+      },
+      "mobile": {
+        "top": "20",
+        "right": "",
+        "bottom": "20",
+        "left": ""
+      },
+      "default": {
+        "pc": {
+          "top": "40",
+          "right": "",
+          "bottom": "40",
+          "left": ""
+        },
+        "mobile": {
+          "top": "20",
+          "right": "",
+          "bottom": "20",
+          "left": ""
+        }
+      }
+    }
+  ],
+  "blocks": [
+    {
+      "type": "card",
+      "name": {
+        "en-US": "Card",
+        "zh-CN": "卡片"
+      },
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": {
+            "en-US": "Collection",
+            "zh-CN": "专辑链接"
+          }
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": {
+            "en-US": "Image",
+            "zh-CN": "图片"
+          }
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": {
+            "en-US": "Card title",
+            "zh-CN": "卡片标题"
+          },
+          "default": ""
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "collection_list_sim",
+      "cname": {
+        "en-US": "Collection list simple",
+        "zh-CN": "Collection list simple"
+      },
+      "category": {
+        "en-US": "Collection",
+        "zh-CN": "专辑"
+      },
+      "ccategory": {
+        "en-US": "Collection",
+        "zh-CN": "专辑"
+      },
+      "display": true,
+      "blocks": [
+        {
+          "type": "card",
+          "settings": {
+            "collection": {},
+            "title": ""
+          }
+        },
+        {
+          "type": "card",
+          "settings": {
+            "collection": {},
+            "title": ""
+          }
+        },
+        {
+          "type": "card",
+          "settings": {
+            "collection": {},
+            "title": ""
+          }
+        },
+        {
+          "type": "card",
+          "settings": {
+            "collection": {},
+            "title": ""
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

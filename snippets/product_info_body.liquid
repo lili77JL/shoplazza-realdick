@@ -43,12 +43,17 @@
 
             {% when 'title' %}
               {% assign mobile_product_title_style = block.settings.mobile_product_title_style %}
+              {% assign title_words = product.title | split: ' ' %}
+              {% assign first_word = title_words | first %}
+              {% assign remaining_words = title_words | slice: 1, title_words.size | join: ' ' %}
+              <div class="font-bold">{{ first_word | escape }}</div>
               <h1
-                class="product-info-title m-0 leading-1.25 type-heading-font-family break-words product-title-color {% if mobile_product_title_style == 'one_line' %} md:truncate {% elsif mobile_product_title_style == 'hide' %} md:hidden {% endif %}"
+                class="text-bas product-info-title m-0 leading-1.25 type-heading-font-family break-words product-title-color {% if mobile_product_title_style == 'one_line' %} md:truncate {% elsif mobile_product_title_style == 'hide' %} md:hidden {% endif %}"
                 {{ block.shoplaza_attributes }}
               >
-                {{ product.title | escape }}
+                {{ remaining_words | escape }}
               </h1>
+              <div class="text-xs font-bold mt-2 lg:mt-2">Premium Safety Silicone: Non-Toxic & Skin-Safe</div>
             {% when 'subtitle' %}
               {% assign subtitle = product.brief %}
               {% if subtitle %}
