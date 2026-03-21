@@ -39,12 +39,17 @@
         padding: 20px 0;
       }
       @media (max-width: 959.98px) {
+        .footer__blocks .page-container {
+          display: flex;
+          flex-wrap: wrap;
+        }
+        .footer__block-wrap {
+          width: 50%;
+          box-sizing: border-box;
+        }
         .footer__block{
           line-height: 1.4;
           text-align: center;
-        }
-        .footer__block-wrap + .footer__block-wrap{
-          border-top: 1px solid var(--color-footer-border);
         }
         .footer__block__header{
           padding: 20px 30px;
@@ -63,7 +68,7 @@
           {% if shop.locale == "ar-SA" %}
             padding: 24px 0 0 72px;
           {% else %}
-            padding: 24px 72px 0 0;
+            padding-top: 24px;
           {% endif %}
         }
         .footer__block__header{
@@ -143,7 +148,7 @@
       }
     </style>
     <div class="footer__blocks">
-      <div class="page-container lg:flex lg:justify-center lg:flex-wrap">
+      <div class="page-container lg:flex lg:justify-between lg:flex-wrap">
         {% for block in section.blocks %}
           {% if block.type contains '//apps' %}
             <div class="footer__block">
@@ -254,7 +259,7 @@
               {% endif %}
             {% endcapture %}
             {% if contact_title or has_contact_content or has_social %}
-              <div class="footer__block-wrap" {{block.shoplaza_attributes}}>
+              <div class="footer__block-wrap" sefewr {{block.shoplaza_attributes}}>
                 {% include 'footer_block_template', title: contact_title, content_items_dom: contact_content, has_content: has_contact_content, block_class: 'footer__block-contact' %}
                 {% if has_social %}
                   {% include 'footer_block_template', title: social_title, content_items_dom: social_content, has_content: has_social, block_class: 'footer__block-social' %}
