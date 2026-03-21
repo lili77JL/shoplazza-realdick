@@ -1,0 +1,252 @@
+{% assign pc_columns = section.settings.pc_columns | default: 4 %}
+{% assign mb_columns = section.settings.mb_columns | default: 2 %}
+{% assign bg_color = section.settings.background_color | default: "#000000" %}
+{% assign text_color = section.settings.text_color | default: "#FFFFFF" %}
+
+<style>
+  [data-section-id="{{ section.id }}"] {
+    background-color: {{ bg_color }};
+  }
+
+  [data-section-id="{{ section.id }}"] .twi_container {
+    padding-top: 40px;
+    padding-bottom: 40px;
+  }
+
+  [data-section-id="{{ section.id }}"] .twi_wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+
+  [data-section-id="{{ section.id }}"] .twi_block {
+    flex: 0 0 calc((100% - {{ pc_columns | minus: 1 | times: 24 }}px) / {{ pc_columns }});
+    max-width: calc((100% - {{ pc_columns | minus: 1 | times: 24 }}px) / {{ pc_columns }});
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    text-align: center;
+    padding: 16px 0;
+  }
+
+  [data-section-id="{{ section.id }}"] .twi_icon {
+    width: 36px;
+    height: 36px;
+    margin-bottom: 12px;
+  }
+
+  [data-section-id="{{ section.id }}"] .twi_icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  [data-section-id="{{ section.id }}"] .twi_title {
+    font-weight: bold;
+    color: {{ text_color }};
+    margin-bottom: 8px;
+  }
+
+  [data-section-id="{{ section.id }}"] .twi_content {
+    font-size: var(--type-text-font-size);
+    color: {{ text_color }};
+    line-height: 1.5;
+  }
+
+  @media (max-width: {{ settings.breakpoint | default: 960 }}px) {
+    [data-section-id="{{ section.id }}"] .twi_container {
+      padding-top: 20px;
+      padding-bottom: 20px;
+    }
+
+    [data-section-id="{{ section.id }}"] .twi_wrapper {
+      gap: 16px;
+    }
+
+    [data-section-id="{{ section.id }}"] .twi_block {
+      flex: 0 0 calc((100% - {{ mb_columns | minus: 1 | times: 16 }}px) / {{ mb_columns }});
+      max-width: calc((100% - {{ mb_columns | minus: 1 | times: 16 }}px) / {{ mb_columns }});
+    }
+  }
+</style>
+
+<div class="page-container twi_container">
+  <div class="twi_wrapper">
+    {% for block in section.blocks %}
+      {% assign image = block.settings.image %}
+      {% assign title = block.settings.title %}
+      {% assign content = block.settings.content %}
+      <div class="twi_block" {{ block.shopline_attributes }}>
+        {% if image %}
+          <div class="twi_icon">
+            <spz-img
+              layout="fixed"
+              width="36"
+              height="36"
+              src="{{ image | img_url }}"
+              alt="{{ images[image].alt | default: title | escape }}"
+              object-fit="contain"
+              auto-fit
+            ></spz-img>
+          </div>
+        {% endif %}
+        {% if title %}
+          <div class="twi_title text-13 md:text-13">{{ title }}</div>
+        {% endif %}
+        {% if content %}
+          <div class="twi_content">{{ content }}</div>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "text_with_icons",
+  "max_blocks": 12,
+  "settings": [
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": {
+        "en-US": "Background color",
+        "zh-CN": "背景颜色"
+      },
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": {
+        "en-US": "Text color",
+        "zh-CN": "文字颜色"
+      },
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "pc_columns",
+      "label": {
+        "en-US": "Items per row (PC)",
+        "zh-CN": "每行展示数量（PC端）"
+      },
+      "min": 1,
+      "max": 6,
+      "step": 1,
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "mb_columns",
+      "label": {
+        "en-US": "Items per row (Mobile)",
+        "zh-CN": "每行展示数量（移动端）"
+      },
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "default": 2
+    }
+  ],
+  "blocks": [
+    {
+      "type": "icon_block",
+      "name": {
+        "en-US": "Icon block",
+        "zh-CN": "图标块"
+      },
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": {
+            "en-US": "Icon",
+            "zh-CN": "图标"
+          },
+          "resource_type": {
+            "design": {
+              "dimensions": {
+                "units": "px",
+                "height": 36,
+                "width": 36
+              }
+            }
+          },
+          "info": {
+            "en-US": "36 x 36px recommended.",
+            "zh-CN": "推荐尺寸：36px*36px"
+          }
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": {
+            "en-US": "Title",
+            "zh-CN": "标题"
+          },
+          "default": "Feature title"
+        },
+        {
+          "type": "textarea",
+          "id": "content",
+          "label": {
+            "en-US": "Content",
+            "zh-CN": "内容"
+          },
+          "default": ""
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "text_with_icons",
+      "cname": {
+        "en-US": "Text with icons",
+        "zh-CN": "Text with icons"
+      },
+      "category": {
+        "en-US": "Image with text",
+        "zh-CN": "图文"
+      },
+      "ccategory": {
+        "en-US": "Image with text",
+        "zh-CN": "图文"
+      },
+      "display": true,
+      "blocks": [
+        {
+          "type": "icon_block",
+          "settings": {
+            "title": "Free shipping",
+            "content": ""
+          }
+        },
+        {
+          "type": "icon_block",
+          "settings": {
+            "title": "Customer service",
+            "content": ""
+          }
+        },
+        {
+          "type": "icon_block",
+          "settings": {
+            "title": "Secure payment",
+            "content": ""
+          }
+        },
+        {
+          "type": "icon_block",
+          "settings": {
+            "title": "Contact us",
+            "content": ""
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
