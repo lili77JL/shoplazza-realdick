@@ -47,6 +47,9 @@
           width: 50%;
           box-sizing: border-box;
         }
+        .footer__block-wrap .footer__block-wrap {
+          width: 100%;
+        }
         .footer__block{
           line-height: 1.4;
           text-align: center;
@@ -163,7 +166,7 @@
             {% capture content %}
               {% for link in links %}
                 <li class="footer__navigation__item">
-                  <a class="no-underline lg:body-plus-1" {% include 'link', link: link %}>
+                  <a class="lg:body-plus-1" {% include 'link', link: link %}>
                     {{ link.title }}
                   </a>
                 </li>
