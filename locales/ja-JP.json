@@ -9,6 +9,9 @@
       "year_ago": "1年前",
       "years_ago": "{year} 数年前"
     },
+    "share": {
+      "copy_success": "コピーに成功しました"
+    },
     "product": {
       "buy_it": "それを購入",
       "mixed_lot": "混合ロット",

@@ -152,9 +152,9 @@
             {% continue %}
           {% elsif block.type == 'navigation'  %}
             {% assign menu = block.settings.menu %}
-            {% assign menu_title = menu.title['en-US'] | default: menu.title %}
-            {% assign title = block.settings.title | default: menu_title %}
             {% assign links = linklists[menu.id].links %}
+            {% assign link_title = linklists[menu.id].title['en-US'] | default: linklists[menu.id].title %}
+            {% assign title = block.settings.title | default: link_title %}
             {% capture content %}
               {% for link in links %}
                 <li class="footer__navigation__item">
@@ -182,19 +182,19 @@
               {% if phone or contact_text or chat_text %}
                 <div class="inline-block">
                   {% if phone %}
-                    <li class="footer__contact__item">
+                    <li class="footer__contact__item lg:body-plus-1">
                       {% include 'icon_phone' %}
                       <a target="_blank" href="tel:{{ phone }}">{{ phone | escape }}</a>
                     </li>
                   {% endif %}
                   {% if contact_text %}
-                    <li class="footer__contact__item">
+                    <li class="footer__contact__item lg:body-plus-1">
                       {% include 'icon_mail' %}
                       <a {% include 'link', link: contact_page %}>{{ contact_text }}</a>
                     </li>
                   {% endif %}
                   {% if chat_text %}
-                    <li class="footer__contact__item">
+                    <li class="footer__contact__item lg:body-plus-1">
                       {% include 'icon_message' %}
                       <a {% include 'link', link: chat_link %}>{{ chat_text }}</a>
                     </li>

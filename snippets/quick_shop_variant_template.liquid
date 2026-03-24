@@ -30,17 +30,20 @@
           return {src: '', alt: ''};
         };
         return `
-          <fieldset spz-if="${variantType=='button' || isThumbImage}" class="quick-shop__variants_content mt-6 mx-0 min-w-[0px]" name="${optionName}"
+          <fieldset
+            spz-if="${variantType=='button' || isThumbImage}"
+            class="quick-shop__variants_content mt-6 mx-0 min-w-[0px]"
+            name="${optionName}"
             @mouseout="quick-shop-selected-variant-${optionId}.rerender(data=event, redo=true);"
             @mouseover="quick-shop-selected-variant-${optionId}.rerender(data=event, redo=true);"
           >
-            <legend class="quick-shop__variants_title flex items-center max-w-full">
-              <span class="lg:body-plus-2 leading-1.3 flex-shrink-0 inline-block">${optionName}:&nbsp;</span>
-              <spz-render 
-                class="inline-flex items-center opacity-60 inline-block flex-grow min-w-[0px]" 
-                id="quick-shop-selected-variant-${optionId}" 
-                layout="container" 
-                template="quick-shop-selected-variant-template" 
+            <legend class="quick-shop__variants_title">
+              <span class="lg:body-plus-2 leading-1.3 inline-block">${optionName}:&nbsp;</span>
+              <spz-render
+                class="items-center opacity-60 inline-block flex-grow min-w-[0px] truncate"
+                id="quick-shop-selected-variant-${optionId}"
+                layout="container"
+                template="quick-shop-selected-variant-template"
                 manual
               >
                 <span>${data.selectedOptions && data.selectedOptions.length && data.selectedOptions.find(v => v.name === optionName).value[0]}</span>
@@ -72,11 +75,22 @@
                   @input-debounced="quick-shop-selected-variant-${optionId}.rerender(data=event, redo=true);"
                 >
                 <label
-                  class="quick-shop-variant-option relative flex items-center break-words flex-shrink-0 {{ borderRadius }}"
+                  class="quick-shop-variant-option break-words {{ borderRadius }}"
                   data-type="${isThumbImage ? (thumbStyle == 'image_with_text' ? 'image-with-text' : 'image') : 'text'}"
-                  for="quick-shop-variant-${value}-${idx}">
-                    <spz-img spz-if="${!!isThumbImage}" class="${thumbStyle == 'image_with_text' ? 'ml-1' : ''}" src="${getThumbImage(value).src}" layout="responsive" width="42" height="42" alt="${getThumbImage(value).alt}" object-fit="cover" auto-fit></spz-img>
-                    <span spz-if="${thumbStyle == 'image_with_text' || !isThumbImage}" class="break-words py-2 px-3">${value}</span>
+                  for="quick-shop-variant-${value}-${idx}"
+                >
+                  <spz-img
+                    spz-if="${!!isThumbImage}"
+                    src="${getThumbImage(value).src}"
+                    layout="responsive"
+                    width="42"
+                    height="42"
+                    alt="${getThumbImage(value).alt}"
+                    object-fit="cover"
+                    auto-fit
+                  ></spz-img>
+                  <span spz-if="${thumbStyle == 'image_with_text' || !isThumbImage}" class="break-words"
+                    >${value}</span>
                 </label>
               </div>
             </div>
@@ -84,11 +98,32 @@
           <div spz-else class="mt-6">
             <div class="lg:body-plus-2 leading-1.3">${optionName}</div>
             <div class="relative mt-3">
-              <select class="quick-shop__variant__select pointer-events-auto w-full text-text-font-size type-text-font-family {{ borderRadius }} secondary-select" role="variant" name="${optionName}">
-                <option spz-for="value in option.values" spz-if="isSelected(value)" class="quick-shop__variants_value" value="${value}" option="${value}" selected>${value}</option>
-                <option spz-for="value in option.values" spz-if="${!isSelected(value)}" class="quick-shop__variants_value" value="${value}" option="${value}">${value}</option>
+              <select
+                class="quick-shop__variant__select pointer-events-auto w-full text-text-font-size type-text-font-family {{ borderRadius }} secondary-select"
+                role="variant"
+                name="${optionName}"
+              >
+                <option
+                  spz-for="value in option.values"
+                  spz-if="isSelected(value)"
+                  class="quick-shop__variants_value"
+                  value="${value}"
+                  option="${value}"
+                  selected
+                >
+                  ${value}
+                </option>
+                <option
+                  spz-for="value in option.values"
+                  spz-if="${!isSelected(value)}"
+                  class="quick-shop__variants_value"
+                  value="${value}"
+                  option="${value}"
+                >
+                  ${value}
+                </option>
               </select>
-              {% include 'icon_arrow_right', icon_class: 'quick-shop__variant__select-icon' %}
+              {% render 'icon_arrow_right', icon_class: 'quick-shop__variant__select-icon' %}
             </div>
           </div>
         `

@@ -9,6 +9,9 @@
       "year_ago": "منذ سنة 1",
       "years_ago": "منذ سنة {year}"
     },
+    "share": {
+      "copy_success": "تم النسخ بنجاح"
+    },
     "product": {
       "buy_it": "اشتريها",
       "mixed_lot": "الكثير مختلط",

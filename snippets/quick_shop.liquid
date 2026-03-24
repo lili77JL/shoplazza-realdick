@@ -1,4 +1,4 @@
-{% include 'quick_shop_css' %}
+{% render 'quick_shop_css' %}
 {% assign enableVariantPriceOnAddToCart = settings.enable_btn_price %}
 {% if enableVariantPriceOnAddToCart == nil %}
   {% assign enableVariantPriceOnAddToCart = true %}
@@ -27,11 +27,12 @@
                 <div>
                   <spz-product-form
                     id="quick-shop-body"
-                    product-unavailable-status
+                    class="quick-shop-body"
+                    layout="container"
+                    show-toast
                     product-id="${productData.id}"
                     variant-id="${selectedVariant.id}"
-                    layout="container"
-                    @atcSuccess="quick-shop.close;{% if template.name != 'cart' %}{% if settings.cart_style == 'drawer' %}cart-drawer-modal.open;{% elsif settings.cart_style == 'to_toast' %}add-card-toast-success.showToast(content='{{ "i18n.product.product_detail.added_to_bag_successfully" | t }}');{% elsif settings.cart_style == 'page' %}SPZ.navigateTo(url='{{ routes.cart_url }}');{% endif %}{% endif %}"
+                    @atcSuccess="quick-shop.close;"
                     @atcError="theme-toast.showToast(content=event.message);"
                     @productChange="{% if enableVariantPriceOnAddToCart %}quick-shop-btn-price.rerender(data=event);{% endif %}{% if shop.wholesale_enabled %}quick-shop-prices-wholesale.rerender(data=event);quick-shop-quantity.update(value=event.quantity,max=event.max,min=event.min);quick-shop-retail-price.rerender(data=event);{% endif %}${product_change_event}"
                   >
@@ -45,9 +46,11 @@
                             layout="container"
                             template="quick-shop-variant-template"
                             spz-if="${product_options && product_options.length > 0}"
-                            product-swatches='{{ settings.product_swatches_name | json }}'
+                            product-swatches="{{ settings.product_swatches_name | join: ',' }}"
                             interact="hover"
                             interference
+                            select-soldout-suffix=" - {{ 'i18n.product.product_detail.sold_out' | t }}"
+                            select-no-exists-suffix=" - {{ 'i18n.products.product.unavailable' | t }}"
                           ></spz-variants>
                           {% if shop.wholesale_enabled %}
                             <div class="mt-5 lg:mt-6 lg:body-plus-2 leading-1.3">{{ 'i18n.product.product_detail.qty' | t }}</div>

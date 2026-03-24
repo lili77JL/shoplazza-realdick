@@ -9,6 +9,9 @@
       "year_ago": "1 tahun yang lalu",
       "years_ago": "{year} tahun yang lalu"
     },
+    "share": {
+      "copy_success": "Berhasil disalin"
+    },
     "product": {
       "buy_it": "Membelinya",
       "mixed_lot": "Lot campuran",

@@ -9,6 +9,9 @@
       "year_ago": "1 jaar geleden",
       "years_ago": "{year} jaren geleden"
     },
+    "share": {
+      "copy_success": "Succesvol gekopieerd"
+    },
     "product": {
       "buy_it": "Koop het",
       "mixed_lot": "Gemengd kavel",

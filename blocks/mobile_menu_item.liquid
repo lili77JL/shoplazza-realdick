@@ -1,0 +1,52 @@
+{% comment %} Mobile menu item style - icon + description {% endcomment %}
+
+{% schema %}
+{
+  "name": "mobile_menu_item",
+  "limit": 30,
+  "presets": [
+    {
+      "name": "mobile_menu_item",
+      "cname": {
+        "en-US": "Menu item style",
+        "zh-CN": "菜单项样式"
+      },
+      "category": {
+        "en-US": "Mobile Menu",
+        "zh-CN": "移动菜单"
+      },
+      "display": true
+    }
+  ],
+  "settings": [
+    {
+      "type": "text",
+      "id": "match_title",
+      "label": {
+        "en-US": "Menu title to match",
+        "zh-CN": "匹配菜单标题"
+      },
+      "info": {
+        "en-US": "Exact menu item title, e.g. Best Sellers",
+        "zh-CN": "精确的菜单标题，如 Best Sellers"
+      }
+    },
+    {
+      "type": "image_picker",
+      "id": "icon",
+      "label": {
+        "en-US": "Icon image",
+        "zh-CN": "图标"
+      }
+    },
+    {
+      "type": "text",
+      "id": "description",
+      "label": {
+        "en-US": "Description text",
+        "zh-CN": "描述文字"
+      }
+    }
+  ]
+}
+{% endschema %}

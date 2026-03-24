@@ -80,13 +80,23 @@
   <form class="search-form md:w-full flex items-center mt-3" id="search-form" action="{{ routes.search_url }}" method="get">
     <input
       id="search-form-input"
-      class="search-form-input clear flex-1 h-full lg:body-plus-2"
+      class="search-form-input clear flex-1 h-full lg:body-plus-2 md:hidden"
       placeholder="{{ 'i18n.search.title' | t }}"
       type="text"
       name="q"
       value="{{ search.terms }}"
       maxlength="1024"
-      @input-debounced="search-filter.clearAll(refresh=false);search-filter-mobile.clearAll(refresh=false);search-input-refresh-list.refresh(keyword=event.value);SPZ.replaceUrlState(q=event.value, reload=false);search-script.execute(func='updateSearchTerms');search-filter-header-render.rerender(data=0);"
+      @input-debounced="search-filter.clearAll(refresh=false, keyword=event.value);search-input-refresh-list.refresh(keyword=event.value);SPZ.replaceUrlState(q=event.value, reload=false);search-script.execute(func='updateSearchTerms');search-filter-header-render.rerender(data=0);"
+    >
+    <input
+      id="search-form-input-mobile"
+      class="search-form-input clear flex-1 h-full lg:body-plus-2 lg:hidden"
+      placeholder="{{ 'i18n.search.title' | t }}"
+      type="text"
+      name="q"
+      value="{{ search.terms }}"
+      maxlength="1024"
+      @input-debounced="search-filter-mobile.clearAll(refresh=false, keyword=event.value);search-input-refresh-list.refresh(keyword=event.value);SPZ.replaceUrlState(q=event.value, reload=false);search-script.execute(func='updateSearchTerms');search-filter-header-render.rerender(data=0);"
     >
     <button class="search-form-submit-btn flex-shrink-0 h-full md:rounded-l-none body-plus-2 lg:rounded-l-none lg:body-plus-4" type="submit">
       {{ 'i18n.search.search_button' | t }}
@@ -97,7 +107,7 @@
     {% include 'product_snippet', source_id: 'search-list', product_id: '${data.id}' %}
   </template>
 
-    {% include 'search_filter_sort_mobile' %}
+    {% include 'search_filter_sort_mobile', show_filter: show_filter %}
 
   <div class="flex mt-4 lg:mt-10">
     {% include 'search_filter', show_filter: show_filter %}

@@ -103,13 +103,10 @@
     text-decoration: line-through;
   }
 
-  .product-info-sales-and-reviews * + * {
-    margin-left: 8px;
-  }
-
-  html[dir="rtl"] .product-info-sales-and-reviews * + * {
-    margin-left: 0;
-    margin-right: 8px;
+  .product-info-sales-and-reviews {
+    display: flex;
+    align-items: center;
+    gap: 8px;
   }
 
   @media (min-width: 960px){
@@ -292,4 +289,12 @@
   .product_snippet__atc_tooltip_content .product-snippet__compare-at-price{
     text-decoration: line-through;
   }
+.product-snippet__price-wrapper {
+  justify-content: center !important;
+  text-align: center !important;
+}
+.product-snippet__price,
+.product-snippet__price .money {
+  color: #DC0D6F !important;
+}
 </style>

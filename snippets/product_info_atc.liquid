@@ -50,19 +50,10 @@
       </button>
     {% endif %}
 
-    {% if show_paypal_btn and shop.payment_settings.paypal_express_enabled and shop.payment_settings.paypal_js %}
-      <spz-paypal
-        class="paypal-loading mt-3 rounded-btn"
-        id="paypal-express-button-container"
-        variant="#product-info-variants"
-        quantity="#product-info-quantity"
-        product-id="{{ product.id }}"
-        variant-id="{{ productSelectedVariant.id }}"
-        product-form="#product-info-body"
-        role="paypal"
-        layout="fixed-height"
-        height="52"
-        paypal-js="{{ shop.payment_settings.paypal_js }}"></spz-paypal>
+    {% if show_paypal_btn %}
+      <div class="ec-button-container mt-2 lg:mt-3">
+        <spz-ec layout="container" height="52" scene="product" product-form="#product-info-body"></spz-ec>
+      </div>
     {% endif %}
 
     <div class="product-info__out_stock mt-2 text-center text-sm leading-1.3 opacity-70 lg:mt-3 hidden">

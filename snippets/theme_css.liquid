@@ -89,7 +89,7 @@
     padding: 0 var(--page-spacing);
     margin: 0 auto;
   }
-  
+
   @media (max-width: 959.98px) {
     .md\:page-container {
       max-width: var(--page-width);
@@ -352,7 +352,7 @@
     -webkit-animation: spinning .8s ease infinite;
   }
 
-   /* spz-carousel button */
+  /* spz-carousel button */
   spz-carousel .spz-carousel-button {
     display: flex;
     align-items: center;
@@ -408,6 +408,12 @@
     opacity: 1;
   }
 
+  .ec-button-container {
+    width: 100%;
+    border-radius: var(--btn-border-radius);
+    overflow: hidden;
+  }
+
   /* discount style */
   .discount_gift_content {
     display: inline-flex;
@@ -422,13 +428,13 @@
   }
 
   {% if shop.locale == 'ar-SA' %}
-		.direction_ltr_self{
-			direction: ltr;
-		}
-		.direction_ltr_self > *:not(.direction_ltr_self){
-			direction: rtl;
-		}
-	{% endif %}
+    .direction_ltr_self{
+      direction: ltr;
+    }
+    .direction_ltr_self > *:not(.direction_ltr_self){
+      direction: rtl;
+    }
+  {% endif %}
 
   spz-carousel > .i-spzhtml-slides-container {
     width: 100%;
@@ -436,6 +442,25 @@
 
   spz-sidebar ~ .i-spzhtml-sidebar-mask {
     background-color: rgba(0, 0, 0, 0.5);
+  }
+
+  /********************************* 全局spz-toast 提示样式 *********************************/
+  spz-toast.i-spzhtml-toast-global {
+    width: max-content;
+    padding: 12px 24px;
+    border-radius: 8px;
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+  @media screen and (max-width: 959.98px) {
+    spz-toast.i-spzhtml-toast-global {
+      max-width: 300px;
+    }
+  }
+  @media screen and (min-width: 960px) {
+    spz-toast.i-spzhtml-toast-global {
+      max-width: 480px;
+    }
   }
 </style>
 

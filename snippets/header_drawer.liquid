@@ -1,207 +1,385 @@
-{% capture icon_arrow_right %}
-  {% include 'icon_arrow_right', icon_class: 'header__drawer_next_icon ml-3 flex-shrink-0' %}
-{% endcapture %}
-{% capture icon_arrow_left %}
-  {% include 'icon_header_arrow_left', icon_class: 'mr-3' %}
-{% endcapture %}
+{% comment %}
+  Mobile drawer — realdick.com style
+  Uses blocks/ folder structure for collapse editor UI
+  Tab blocks contain child item/nested-tab blocks
+{% endcomment %}
+
 <style>
-  .header__drawer{
-    width: 330px;
-    top: 0;
-    bottom: 0;
-    max-width: 100vw !important;
-    line-height: 1.4;
-  }
-  .header__drawer,
-  .header__drawer + .i-spzhtml-sidebar-mask{
-    pointer-events: auto;
-  }
-  .header__drawer a{
-    color: inherit;
-    text-decoration: none;
-  }
-  .header__drawer_header{
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    height: 62px;
-    border-bottom: 1px solid var(--color-border);
-  }
-  .header__drawer_close{
-    width: 62px;
-    position: absolute;
-    top: 0;
-    {% if shop.locale == "ar-SA" %}
-      left: 0;
-    {% else %}
-      right: 0;
-    {% endif %}
-    bottom: 0;
-    opacity: 0.7;
-  }
-  .header__drawer_footer{
-    position: sticky;
-    bottom: 0;
-    z-index: 10;
-    border-top: 1px solid rgba(230,230,230,0.6);
-    padding: 16px 20px;
-  }
-  .header__drawer_prev{
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    display: flex;
-    align-items: center;
-    border-bottom: 1px solid var(--color-border);
-    padding: 16px 20px;
-    background-color: var(--color-body-bg);
-  }
-  .header__drawer [spz-nested-submenu]:not([child-open]){
-    overflow: hidden auto;
-    max-height: 100%;
-  }
-  .header__drawer_menu_item{
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    min-height: 22px;
-    {% if shop.locale == "ar-SA" %}
-      margin-right: 20px;
-      padding: 16px 0 16px 20px;
-    {% else %}
-      margin-left: 20px;
-      padding: 16px 20px 16px 0;
-    {% endif %}
-    border-bottom: 1px solid var(--color-border);
-    cursor: pointer;
-  }
-  .header__drawer_menu_item a:not([spz-nested-submenu-open]){
-    flex: 1
-  }
-  .header_drawer_menu .header_drawer_menu_first{
-    overflow: hidden auto;
-  }
-  .header_drawer_menu[child-open] .header_drawer_menu_first{
-    overflow: unset !important;
-  }
-  {% if shop.locale == "ar-SA" %}
-    .header_drawer_menu svg{
-      transform: rotate(180deg);
-    }
-  {% endif %}
+  .header__drawer{width:330px;top:0;bottom:0;max-width:100vw !important;line-height:1.4;}
+  .header__drawer,.header__drawer+.i-spzhtml-sidebar-mask{pointer-events:auto;}
+  .header__drawer a{color:inherit;text-decoration:none;}
+
+  .cmm-tabs{display:flex;align-items:center;border-bottom:2px solid #f1f1f1;padding:0 16px;flex-shrink:0;}
+  .cmm-tab-btn{flex:0 0 auto;padding:13px 16px;font-size:16px;font-weight:700;color:#bbb;background:none;border:none;cursor:pointer;position:relative;transition:color .2s;}
+  .cmm-tab-btn.is-active{color:#000;}
+  .cmm-tab-btn.is-active::after{content:'';position:absolute;bottom:-2px;left:0;width:100%;height:3px;background:#DC0D6F;border-radius:2px 2px 0 0;}
+  .cmm-tab-close{margin-left:auto;width:36px;height:36px;display:flex;align-items:center;justify-content:center;background:#f5f5f5;border:none;border-radius:50%;cursor:pointer;color:#333;font-size:18px;flex-shrink:0;}
+
+  .cmm-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;}
+  .cmm-pane{display:none;}
+  .cmm-pane.is-active{display:block;}
+  .cmm-list{list-style:none;margin:0;padding:0;}
+
+  .cmm-row{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1px solid #f3f3f3;text-decoration:none;color:inherit;width:100%;background:none;border-left:0;border-right:0;border-top:0;cursor:pointer;font-family:inherit;text-align:left;}
+  a.cmm-row{display:flex;}
+  .cmm-row__left{display:flex;align-items:center;gap:14px;flex:1;min-width:0;}
+  .cmm-row__icon{width:48px;height:48px;border-radius:50%;background:#f0f0f0;background-size:cover;background-position:center;object-fit:cover;flex-shrink:0;}
+  img.cmm-row__icon{border:0;}
+  .cmm-row__text{display:flex;flex-direction:column;gap:2px;min-width:0;}
+  .cmm-row__title{margin:0;font-size:15px;font-weight:600;line-height:1.3;color:#1a1a1a;}
+  .cmm-row__desc{margin:0;font-size:12px;color:#999;line-height:1.3;font-weight:400;}
+  .cmm-row__arrow{flex-shrink:0;width:20px;height:20px;color:#ccc;transition:transform .25s ease;}
+  .cmm-row__arrow.is-open{transform:rotate(180deg);color:#999;}
+
+  .cmm-collapse{max-height:0;overflow:hidden;transition:max-height .35s ease;}
+  .cmm-collapse.is-open{max-height:4000px;}
+  .cmm-collapse__inner{padding:2px 0 8px;}
+  .cmm-collapse__link{display:block;font-size:14px;color:#555;text-decoration:none;padding:10px 20px 10px 82px;border-bottom:1px solid #fafafa;transition:color .15s;}
+  .cmm-collapse__link:active{color:#000;}
+
+  .cmm-ntabs{display:flex;gap:0;border-bottom:2px solid #f0f0f0;margin:4px 20px 0 20px;}
+  .cmm-ntab-btn{flex:0 0 auto;padding:10px 16px;font-size:13px;font-weight:700;color:#bbb;background:none;border:none;cursor:pointer;position:relative;}
+  .cmm-ntab-btn.is-active{color:#000;}
+  .cmm-ntab-btn.is-active::after{content:'';position:absolute;bottom:-2px;left:0;width:100%;height:2px;background:#333;border-radius:1px;}
+  .cmm-npane{display:none;}
+  .cmm-npane.is-active{display:block;}
+
+  .cmm-nlist{list-style:none;margin:0;padding:0;}
+  .cmm-nlist-item{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;border-bottom:1px solid #f9f9f9;text-decoration:none;color:inherit;}
+  .cmm-nlist-item__left{display:flex;align-items:center;gap:12px;flex:1;min-width:0;}
+  .cmm-nlist-icon{width:40px;height:40px;border-radius:50%;object-fit:cover;background:#f0f0f0;flex-shrink:0;}
+  .cmm-nlist-text{font-size:14px;color:#333;}
+  .cmm-nlist-arrow{width:16px;height:16px;color:#ccc;flex-shrink:0;}
+
+  .cmm-ngrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px 20px;}
+  .cmm-ngrid-item{display:flex;flex-direction:column;align-items:center;text-decoration:none;color:inherit;gap:6px;}
+  .cmm-ngrid-title{font-size:12px;color:#555;text-align:center;}
+
+  .cmm-acct{border-top:1px solid #eee;padding:16px 20px;background:#fff;}
+  .cmm-acct a,.cmm-acct button{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit;font-size:15px;padding:8px 0;background:none;border:none;cursor:pointer;font-family:inherit;}
+  .cmm-acct svg{width:20px;height:20px;flex-shrink:0;}
 </style>
+
 <spz-sidebar
   id="header_drawer"
   class="header__drawer {% if nav_text_uppercase %} uppercase {% endif %} flex flex-col bg-color-body"
-  side="right"
+  side="left"
   layout="nodisplay"
   @close="{{section_prefix}}-announcement.toggleClass(class='header_mask_open', force=false);"
 >
-  <div class="header__drawer_header flex-shrink-0 relative flex bg-color-body">
-    <i class="header__drawer_close flex-center cursor-pointer" @tap="header_drawer.close()">
-      {% include 'icon_modal_close' %}
-    </i>
-  </div>
-  <div class="flex-1 relative overflow-hidden">
-    <spz-nested-menu class="header_drawer_menu flex flex-col" layout="fill" side="right" id="menu-drawer">
-      <ul class="header_drawer_menu_first flex-1 hide-scrollbar">
-        {% assign menu_id = section.settings.menu.id %}
-        {% if menu_id %}
-          {% assign firstLinks = linklists[menu_id].links %}
-          {% for firstLink in firstLinks %}
-            {% assign firstLinkTitle = firstLink.title | escape %}
-            {% assign secondLinks = linklists[firstLink.id].links %}
-            <li>
-              <div {% if secondLinks %}spz-nested-submenu-open{% endif %} class="header__drawer_menu_item">
-                {% include 'header_menu_item_title', link: firstLink, class: '' %}
-                {% if secondLinks %}
-                  {{icon_arrow_right}}
-                {% endif %}
-              </div>
-              {% if secondLinks %}
-                  <ul class="clear" spz-nested-submenu>
-                    <li class="header__drawer_prev" spz-nested-submenu-close>
-                      {{icon_arrow_left}}
-                      <span class="flex-1 underline">{{ firstLinkTitle }}</span>
-                    </li>
-                    {% for secondLink in secondLinks %}
-                      {% assign secondLinkTitle = secondLink.title | escape %}
-                      {% assign thirdLinks = linklists[secondLink.id].links %}
-                      <li>
-                        <div {% if thirdLinks %}spz-nested-submenu-open{% endif %} class="header__drawer_menu_item">
-                          {% include 'header_menu_item_title', link: secondLink, class: '' %}
-                          {% if thirdLinks %}
-                            {{icon_arrow_right}}
-                          {% endif %}
-                        </div>
-                        {% if thirdLinks %}
-                          {% assign thirdLinkTitle = thirdLink.title | escape %}
-                          <ul class="clear" spz-nested-submenu>
-                            <li class="header__drawer_prev" spz-nested-submenu-close>
-                              {{icon_arrow_left}}
-                              <span class="flex-1 underline">{{ secondLinkTitle }}</span>
-                            </li>
-                            {% for thirdLink in thirdLinks %}
-                              {% assign thirdLinkTitle = thirdLink.title | escape %}
-                              <li>
-                                <div class="header__drawer_menu_item">
-                                  {% include 'header_menu_item_title', link: thirdLink, class: '' %}
-                                </div>
-                              </li>
-                            {% endfor %}
-                          </ul>
-                        {% endif %}
-                      </li>
-                    {% endfor %}
-                  </ul>
-              {% endif %}
-            </li>
-          {% endfor %}
-        {% endif %}
-          <div class="header__drawer_plugins">
-          {% comment %} 插件：语言切换和货币切换 {% endcomment %}
-          {% for block in section.blocks %}
-            {% if block.type contains '//apps' %}
-              <div class="{% unless mb_plugin_currency_and_translate == 'drawer' %} hidden {% endunless %} px-5 my-10">
-                {% render block %}
-              </div>
-              {% continue %}
-            {% endif %}
-          {% endfor %}
-          <div class="empty-hidden {% unless mb_plugin_currency_and_translate == 'drawer' %} hidden {% endunless %} plugin__translate-header px-5 my-10"></div>
-          <div class="empty-hidden {% unless mb_plugin_currency_and_translate == 'drawer' %} hidden {% endunless %} plugin__currency px-5 my-10"></div>
-        </div>
-      </ul>
 
-      {% capture account_menu_list %} 
-        {% for link in linklists.account_menu.links -%}
-          {% if link.type == 'api_request' %}
-            <li class="header__drawer_menu_item">
-              <form action-xhr="{{ link.url }}" method="POST" refresh-when-submit-success>
-                <button class="clear" type="submit">{{link.title}}</button>
-              </form>
-            </li>
-          {% else %}
-            <li class="header__drawer_menu_item"><a href="{{ link.url}}">{{ link.title }}</a></li>
-          {% endif %}
-        {%- endfor %}
-      {% endcapture %}
-      {%- comment -%} account {%- endcomment -%}
-      {% if customer.id %}
-        <div spz-nested-submenu-open class="header__drawer_footer flex items-center justify-between bg-color-body cursor-pointer">
-          <span class="flex-1">{{ 'i18n.general.breadcrumbs.my_account' | t }}</span>
-          {{icon_arrow_right}}
+  {%- comment -%} ── Tab buttons ── {%- endcomment -%}
+  {%- assign tab_counter = 0 -%}
+  <div class="cmm-tabs">
+    {%- for block in section.blocks -%}
+      {%- if block.type == 'blocks/mobile_menu_tab' -%}
+        <button class="cmm-tab-btn{% if tab_counter == 0 %} is-active{% endif %}" data-cmm-tab="cmm-pane-{{ block.id }}" type="button">{{ block.settings.tab_title }}</button>
+        {%- assign tab_counter = tab_counter | plus: 1 -%}
+      {%- endif -%}
+    {%- endfor -%}
+    <button class="cmm-tab-close" type="button" @tap="header_drawer.close()">&times;</button>
+  </div>
+
+  <div class="cmm-scroll">
+
+    {%- comment -%} ── Tab panes ── {%- endcomment -%}
+    {%- assign pane_counter = 0 -%}
+    {%- for block in section.blocks -%}
+      {%- if block.type == 'blocks/mobile_menu_tab' -%}
+        {%- assign tab_menu_id = block.settings.menu.id -%}
+        <div class="cmm-pane{% if pane_counter == 0 %} is-active{% endif %}" id="cmm-pane-{{ block.id }}">
+          <ul class="cmm-list">
+            {%- assign tab_links = linklists[tab_menu_id].links -%}
+            {%- assign row_n = 0 -%}
+            {%- for link in tab_links -%}
+              {%- assign childLinks = link.links -%}
+              {%- assign row_n = row_n | plus: 1 -%}
+
+              <li>
+                {%- if childLinks.size > 0 -%}
+                  <button class="cmm-row" type="button" data-cmm-toggle="t{{ pane_counter }}r{{ row_n }}" data-cmm-title="{{ link.title | escape }}">
+                    <div class="cmm-row__left">
+                      <div class="cmm-row__icon" data-cmm-img></div>
+                      <div class="cmm-row__text">
+                        <h5 class="cmm-row__title">{{ link.title }}</h5>
+                        <p class="cmm-row__desc" data-cmm-desc style="display:none;"></p>
+                      </div>
+                    </div>
+                    <svg class="cmm-row__arrow" data-cmm-arrow="t{{ pane_counter }}r{{ row_n }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+                  </button>
+                  <div class="cmm-collapse" data-cmm-panel="t{{ pane_counter }}r{{ row_n }}" data-cmm-parent="{{ link.title | escape }}">
+                    <div class="cmm-collapse__inner" data-cmm-collapse-inner>
+                      <div data-cmm-default-links>
+                        {%- for childLink in childLinks -%}
+                          <a href="{{ childLink.url }}" class="cmm-collapse__link">{{ childLink.title }}</a>
+                        {%- endfor -%}
+                      </div>
+                    </div>
+                  </div>
+
+                {%- else -%}
+                  <a href="{{ link.url }}" class="cmm-row" data-cmm-title="{{ link.title | escape }}">
+                    <div class="cmm-row__left">
+                      <div class="cmm-row__icon" data-cmm-img></div>
+                      <div class="cmm-row__text">
+                        <h5 class="cmm-row__title">{{ link.title }}</h5>
+                        <p class="cmm-row__desc" data-cmm-desc style="display:none;"></p>
+                      </div>
+                    </div>
+                    <svg class="cmm-row__arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                  </a>
+                {%- endif -%}
+              </li>
+            {%- endfor -%}
+          </ul>
         </div>
-        <ul class="clear" spz-nested-submenu>
-          <li class="header__drawer_prev" spz-nested-submenu-close>
-            {{icon_arrow_left}}
-            <span class="flex-1 underline">{{ 'i18n.general.breadcrumbs.my_account' | t }}</span>
-          </li>
-          {{account_menu_list}}
-        </ul>
-      {% else %}
-        {{account_menu_list}}
-      {% endif %}
-    </spz-nested-menu>
+        {%- assign pane_counter = pane_counter | plus: 1 -%}
+      {%- endif -%}
+    {%- endfor -%}
+
+    {%- comment -%} ── Plugins ── {%- endcomment -%}
+    <div class="header__drawer_plugins">
+      {%- for block in section.blocks -%}
+        {%- if block.type contains '//apps' -%}
+          <div class="{% unless mb_plugin_currency_and_translate == 'drawer' %} hidden {% endunless %} px-5 my-10">
+            {% render block %}
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+      <div class="empty-hidden {% unless mb_plugin_currency_and_translate == 'drawer' %} hidden {% endunless %} plugin__translate-header px-5 my-10"></div>
+      <div class="empty-hidden {% unless mb_plugin_currency_and_translate == 'drawer' %} hidden {% endunless %} plugin__currency px-5 my-10"></div>
+    </div>
+
+    {%- comment -%} ── Account ── {%- endcomment -%}
+    <div class="cmm-acct">
+      {%- if customer.id -%}
+        <a href="/account">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          {{ 'i18n.general.breadcrumbs.my_account' | t }}
+        </a>
+      {%- else -%}
+        {%- for link in linklists.account_menu.links -%}
+          {%- if link.type == 'api_request' -%}
+            <form action-xhr="{{ link.url }}" method="POST" refresh-when-submit-success>
+              <button type="submit">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                {{ link.title }}
+              </button>
+            </form>
+          {%- else -%}
+            <a href="{{ link.url }}">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              {{ link.title }}
+            </a>
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endif -%}
+    </div>
+
   </div>
 </spz-sidebar>
+
+{%- comment -%} ── Block data as JSON ── {%- endcomment -%}
+<script type="application/json" id="cmm-block-data">
+[
+  {%- for block in section.blocks -%}
+    {%- if block.type == 'blocks/mobile_menu_tab' -%}
+      {%- for child in block.blocks -%}
+        {%- if child.type == 'blocks/mobile_menu_item' -%}
+          {
+            "type": "item",
+            "title": {{ child.settings.match_title | strip | downcase | json }},
+            "icon": {{ child.settings.icon | img_url: '120x120' | json }},
+            "desc": {{ child.settings.description | json }}
+          },
+        {%- endif -%}
+        {%- if child.type == 'blocks/mobile_nested_tab' -%}
+          {
+            "type": "nested_tab",
+            "parent": {{ child.settings.parent_title | strip | downcase | json }},
+            "tab_title": {{ child.settings.tab_title | json }},
+            "layout": {{ child.settings.layout | json }},
+            "links": [
+              {%- if child.settings.menu_handle != blank -%}
+                {%- for link in linklists[child.settings.menu_handle].links -%}
+                  {
+                    "title": {{ link.title | json }},
+                    "url": {{ link.url | json }},
+                    "image": {{ link.object.image | img_url: '120x120' | json }}
+                  },
+                {%- endfor -%}
+              {%- endif -%}
+            ]
+          },
+        {%- endif -%}
+      {%- endfor -%}
+    {%- endif -%}
+  {%- endfor -%}
+]
+</script>
+
+<script>
+(function(){
+  var drawer = document.getElementById('header_drawer');
+  if(!drawer) return;
+
+  /* ── Tab switching ── */
+  drawer.querySelectorAll('.cmm-tab-btn').forEach(function(tab){
+    tab.addEventListener('click', function(){
+      drawer.querySelectorAll('.cmm-tab-btn').forEach(function(t){ t.classList.remove('is-active'); });
+      drawer.querySelectorAll('.cmm-pane').forEach(function(p){ p.classList.remove('is-active'); });
+      tab.classList.add('is-active');
+      var t = document.getElementById(tab.getAttribute('data-cmm-tab'));
+      if(t) t.classList.add('is-active');
+    });
+  });
+
+  /* ── Accordion ── */
+  drawer.querySelectorAll('[data-cmm-toggle]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var id = btn.getAttribute('data-cmm-toggle');
+      var panel = drawer.querySelector('[data-cmm-panel="' + id + '"]');
+      var arrow = drawer.querySelector('[data-cmm-arrow="' + id + '"]');
+      if(!panel) return;
+      var isOpen = panel.classList.contains('is-open');
+
+      drawer.querySelectorAll('.cmm-collapse.is-open').forEach(function(p){ p.classList.remove('is-open'); });
+      drawer.querySelectorAll('.cmm-row__arrow.is-open').forEach(function(a){ a.classList.remove('is-open'); });
+
+      if(!isOpen){
+        panel.classList.add('is-open');
+        if(arrow) arrow.classList.add('is-open');
+      }
+    });
+  });
+
+  /* ── Parse block data ── */
+  var blocks = [];
+  try {
+    var raw = document.getElementById('cmm-block-data');
+    if(raw) blocks = JSON.parse(raw.textContent.replace(/,\s*\]/g, ']'));
+  } catch(e){ console.error('cmm parse error', e); }
+
+  /* ── Build item map ── */
+  var itemMap = {};
+  blocks.forEach(function(b){ if(b.type === 'item' && b.title) itemMap[b.title.toLowerCase()] = b; });
+
+  /* ── Inject icons & descriptions ── */
+  drawer.querySelectorAll('[data-cmm-title]').forEach(function(row){
+    var key = row.getAttribute('data-cmm-title').toLowerCase();
+    var cfg = itemMap[key];
+    if(!cfg) return;
+
+    var iconEl = row.querySelector('[data-cmm-img]');
+    if(cfg.icon && iconEl){
+      var img = document.createElement('img');
+      img.className = 'cmm-row__icon';
+      img.src = cfg.icon;
+      img.alt = '';
+      img.loading = 'lazy';
+      iconEl.replaceWith(img);
+    }
+
+    var descEl = row.querySelector('[data-cmm-desc]');
+    if(cfg.desc && descEl){
+      descEl.textContent = cfg.desc;
+      descEl.style.display = '';
+    }
+  });
+
+  /* ── Build nested tabs ── */
+  var nestedMap = {};
+  blocks.forEach(function(b){
+    if(b.type === 'nested_tab' && b.parent){
+      var key = b.parent.toLowerCase();
+      if(!nestedMap[key]) nestedMap[key] = [];
+      nestedMap[key].push(b);
+    }
+  });
+
+  var arrowSvg = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
+
+  drawer.querySelectorAll('[data-cmm-parent]').forEach(function(collapseEl){
+    var parentTitle = collapseEl.getAttribute('data-cmm-parent').toLowerCase();
+    var tabs = nestedMap[parentTitle];
+    if(!tabs || tabs.length === 0) return;
+
+    var inner = collapseEl.querySelector('[data-cmm-collapse-inner]');
+    var defaultLinks = collapseEl.querySelector('[data-cmm-default-links]');
+    if(!inner) return;
+
+    var tabHeader = document.createElement('div');
+    tabHeader.className = 'cmm-ntabs';
+
+    var allTabs = [];
+    tabs.forEach(function(tab, i){
+      var btn = document.createElement('button');
+      btn.className = 'cmm-ntab-btn' + (i === 0 ? ' is-active' : '');
+      btn.textContent = tab.tab_title;
+      btn.setAttribute('data-ntab', parentTitle + '-' + i);
+      tabHeader.appendChild(btn);
+      allTabs.push({ btn: btn, tab: tab, id: parentTitle + '-' + i });
+    });
+
+    inner.insertBefore(tabHeader, inner.firstChild);
+    if(defaultLinks) defaultLinks.remove();
+
+    allTabs.forEach(function(item, i){
+      var pane = document.createElement('div');
+      pane.className = 'cmm-npane' + (i === 0 ? ' is-active' : '');
+      pane.setAttribute('data-ntab-pane', item.id);
+
+      var links = item.tab.links || [];
+
+      if(item.tab.layout === 'grid'){
+        var grid = document.createElement('div');
+        grid.className = 'cmm-ngrid';
+        links.forEach(function(link){
+          var a = document.createElement('a');
+          a.href = link.url;
+          a.className = 'cmm-ngrid-item';
+          var matchKey = link.title.toLowerCase();
+          var matchCfg = itemMap[matchKey];
+          var imgSrc = (matchCfg && matchCfg.icon) ? matchCfg.icon : (link.image || '');
+          a.innerHTML = '<div style="width:100%;aspect-ratio:3/1;border-radius:6px;overflow:hidden;background:#f0f0f0;">' +
+            (imgSrc ? '<img src="' + imgSrc + '" style="width:100%;height:100%;object-fit:cover;" loading="lazy">' : '') +
+            '</div><span class="cmm-ngrid-title">' + link.title + '</span>';
+          grid.appendChild(a);
+        });
+        pane.appendChild(grid);
+      } else {
+        var ul = document.createElement('ul');
+        ul.className = 'cmm-nlist';
+        links.forEach(function(link){
+          var li = document.createElement('li');
+          var matchKey = link.title.toLowerCase();
+          var matchCfg = itemMap[matchKey];
+          var imgSrc = (matchCfg && matchCfg.icon) ? matchCfg.icon : (link.image || '');
+          var iconHtml = imgSrc
+            ? '<img class="cmm-nlist-icon" src="' + imgSrc + '" alt="" loading="lazy">'
+            : '<div class="cmm-nlist-icon"></div>';
+          li.innerHTML = '<a href="' + link.url + '" class="cmm-nlist-item">' +
+            '<div class="cmm-nlist-item__left">' + iconHtml +
+            '<span class="cmm-nlist-text">' + link.title + '</span></div>' +
+            '<span class="cmm-nlist-arrow">' + arrowSvg + '</span></a>';
+          ul.appendChild(li);
+        });
+        pane.appendChild(ul);
+      }
+
+      inner.appendChild(pane);
+    });
+
+    tabHeader.querySelectorAll('.cmm-ntab-btn').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        tabHeader.querySelectorAll('.cmm-ntab-btn').forEach(function(b){ b.classList.remove('is-active'); });
+        inner.querySelectorAll('.cmm-npane').forEach(function(p){ p.classList.remove('is-active'); });
+        btn.classList.add('is-active');
+        var target = inner.querySelector('[data-ntab-pane="' + btn.getAttribute('data-ntab') + '"]');
+        if(target) target.classList.add('is-active');
+      });
+    });
+  });
+
+})();
+</script>

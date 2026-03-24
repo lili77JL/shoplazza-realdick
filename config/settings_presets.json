@@ -357,6 +357,10 @@
             {
               "type": "subtotal",
               "settings": {}
+            },
+            {
+              "type": "cart_ec_button",
+              "settings": {}
             }
           ]
         }
@@ -2436,6 +2440,10 @@
             {
               "type": "subtotal",
               "settings": {}
+            },
+            {
+              "type": "cart_ec_button",
+              "settings": {}
             }
           ]
         }
@@ -3733,6 +3741,10 @@
             {
               "type": "subtotal",
               "settings": {}
+            },
+            {
+              "type": "cart_ec_button",
+              "settings": {}
             }
           ]
         }
@@ -4438,6 +4450,10 @@
             },
             {
               "type": "subtotal",
+              "settings": {}
+            },
+            {
+              "type": "cart_ec_button",
               "settings": {}
             }
           ]
@@ -7166,6 +7182,10 @@
             {
               "type": "subtotal",
               "settings": {}
+            },
+            {
+              "type": "cart_ec_button",
+              "settings": {}
             }
           ]
         }
@@ -8219,11 +8239,11 @@
                 "chat_text": "Live chat",
                 "chat_link": null,
                 "custom_text": null,
-                "facebook": "1",
-                "twitter": "2",
-                "pinterest": "3",
-                "instagram": "4",
-                "snapchat": "5",
+                "facebook": null,
+                "twitter": null,
+                "pinterest": null,
+                "instagram": null,
+                "snapchat": null,
                 "tiktok": null,
                 "tumblr": null,
                 "linkedin": null,
@@ -8258,6 +8278,10 @@
             {
               "type": "subtotal",
               "settings": []
+            },
+            {
+              "type": "cart_ec_button",
+              "settings": {}
             }
           ]
         }
@@ -9512,7 +9536,7 @@
                 "settings": {
                   "show_buy_now": true,
                   "show_add": true,
-                  "show_paypal": false
+                  "show_paypal": true
                 },
                 "selected": false
               },
@@ -10438,11 +10462,11 @@
                 "chat_text": "Live chat",
                 "chat_link": null,
                 "custom_text": null,
-                "facebook": "asa",
-                "twitter": "dasda",
-                "pinterest": "dadas",
-                "instagram": "dasdas",
-                "snapchat": "dsa",
+                "facebook": null,
+                "twitter": null,
+                "pinterest": null,
+                "instagram": null,
+                "snapchat": null,
                 "tiktok": null,
                 "tumblr": null,
                 "linkedin": null,
@@ -10472,6 +10496,10 @@
             {
               "type": "subtotal",
               "settings": []
+            },
+            {
+              "type": "cart_ec_button",
+              "settings": {}
             }
           ]
         }
@@ -11485,7 +11513,7 @@
                 "settings": {
                   "show_buy_now": true,
                   "show_add": true,
-                  "show_paypal": false
+                  "show_paypal": true
                 }
               },
               {

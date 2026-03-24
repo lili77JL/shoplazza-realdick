@@ -1,0 +1,52 @@
+{% comment %} Mobile menu tab - container block with collapse {% endcomment %}
+{% content_for 'blocks' %}
+
+{% schema %}
+{
+  "name": "mobile_menu_tab",
+  "limit": 5,
+  "collapse": true,
+  "presets": [
+    {
+      "name": "mobile_menu_tab",
+      "cname": {
+        "en-US": "Mobile menu tab",
+        "zh-CN": "移动菜单标签页"
+      },
+      "category": {
+        "en-US": "Mobile Menu",
+        "zh-CN": "移动菜单"
+      },
+      "display": true,
+      "blocks": []
+    }
+  ],
+  "settings": [
+    {
+      "type": "text",
+      "id": "tab_title",
+      "label": {
+        "en-US": "Tab title",
+        "zh-CN": "标签名称"
+      },
+      "default": "Shop"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": {
+        "en-US": "Navigation menu",
+        "zh-CN": "导航菜单"
+      }
+    }
+  ],
+  "blocks": [
+    {
+      "type": "blocks/mobile_menu_item"
+    },
+    {
+      "type": "blocks/mobile_nested_tab"
+    }
+  ]
+}
+{% endschema %}

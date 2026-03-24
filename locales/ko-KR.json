@@ -9,6 +9,9 @@
       "year_ago": "1 년 전",
       "years_ago": "{year} 몇 년 전"
     },
+    "share": {
+      "copy_success": "복사가 완료되었습니다"
+    },
     "product": {
       "buy_it": "구입",
       "mixed_lot": "혼합 로트",

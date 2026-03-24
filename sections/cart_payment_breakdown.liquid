@@ -38,6 +38,19 @@
         "zh-CN": "结算按钮"
       },
       "settings": []
+    },
+    {
+      "type": "cart_ec_button",
+      "limit": 1,
+      "name": {
+        "en-US": "Express checkout button",
+        "zh-CN": "快捷结账按钮"
+      },
+      "settings": [],
+      "info": {
+        "zh-CN": "启用动态快捷结账按钮后，系统将运用智能算法，为当前顾客推荐最为适配的快捷支付方式。若需使用该功能，请先确保已在支付服务商处开通上述支付方式的快捷支付功能。",
+        "en-US": "When the dynamic express checkout button is enabled, the system will use intelligent algorithms to recommend the most suitable express payment method for the current customer. To use this feature, please ensure that express checkout has been enabled for the above payment methods with your payment service provider."
+      }
     }
   ],
   "presets": [
@@ -63,6 +76,10 @@
         },
         {
           "type": "checkout_button",
+          "settings": {}
+        },
+        {
+          "type": "cart_ec_button",
           "settings": {}
         }
       ]

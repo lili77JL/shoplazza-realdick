@@ -9,6 +9,9 @@
       "year_ago": "vor 1 Jahr",
       "years_ago": "{year} vor Jahren"
     },
+    "share": {
+      "copy_success": "Erfolgreich kopiert"
+    },
     "product": {
       "buy_it": "Kauf es",
       "mixed_lot": "Gemischtes Los",

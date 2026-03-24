@@ -1,7 +1,6 @@
 <spz-product-form
   product-id="{{card_product.id | default: '${data.id}'}}"
   layout="container"
-  @atcSuccess="{% if template.name != 'cart' %}{% if settings.cart_style == 'drawer' %}cart-drawer-modal.open;{% elsif settings.cart_style == 'to_toast' %}add-card-toast-success.showToast(content='{{ "i18n.product.product_detail.added_to_bag_successfully" | t }}');{% elsif settings.cart_style == 'page' %}SPZ.navigateTo(url='{{ routes.cart_url }}');{% endif %}{% endif %}"
   @atcError="theme-toast.showToast(content=event.message);"
   {{attr}}
 >

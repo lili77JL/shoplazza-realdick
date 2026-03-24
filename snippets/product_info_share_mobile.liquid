@@ -1,26 +1,133 @@
 {% assign share_title = product.title %}
 {% assign share_permalink = product.url %}
 {% assign share_image = product.image.src %}
+{% assign share_url = shop.url | append: share_permalink %}
 
 <spz-tooltip class="lg:hidden" layout="logic" interact="click" for="{{for}}" placement="bottomRight" overlay-class="{{overlayClass}}" dir="{% if shop.locale == 'ar-SA' %}rtl{% else %}ltr{% endif %}">
   <ul class="product-info-share-list clear">
-    <li>
-      <a target="_blank" data-track="social_share" href="//www.facebook.com/sharer.php?u={{ shop.url | append: share_permalink }}" class="share-facebook">
-        {% include 'icon_sharing_facebook' %}
-        <span>Facebook</span>
-      </a>
-    </li>
-    <li>
-      <a target="_blank" data-track="social_share" href="//twitter.com/share?text={{ share_title | url_param_escape }}&amp;url={{ shop.url | append: share_permalink }}" class="share-twitter">
-        {% include 'icon_sharing_twitter' %}
-        <span>Twitter</span>
-      </a>
-    </li>
-    <li>
-      <a target="_blank" data-track="social_share" href="//pinterest.com/pin/create/button/?url={{ shop.url | append: share_permalink }}&amp;media={{ share_image | img_url: '1024x1024' }}&amp;description={{ share_title | url_param_escape }}" class="share-pinterest">
-        {% include 'icon_sharing_pinterest' %}
-        <span>Pinterest</span>
-      </a>
-    </li>
+    {% if item.settings.share_facebook %}
+      <li>
+        <a target="_blank" data-track="social_share" href="//www.facebook.com/sharer.php?u={{ shop.url | append: share_permalink }}" class="share-facebook">
+          {% if item.settings.show_official_icons == false %}
+            {% include 'icon_sharing_facebook' %}
+          {% else %}
+            {% include 'icon_official_sharing_facebook' %}
+          {% endif %}
+          <span>Facebook</span>
+        </a>
+      </li>
+    {% endif %}
+    {% if item.settings.share_twitter %}
+      <li>
+        <a target="_blank" data-track="social_share" href="//twitter.com/share?text={{ share_title | url_param_escape }}&amp;url={{ shop.url | append: share_permalink }}" class="share-twitter">
+          {% if item.settings.show_official_icons == false %}
+            {% include 'icon_sharing_twitter' %}
+          {% else %}
+            {% include 'icon_official_sharing_twitter' %}
+          {% endif %}
+          <span>Twitter</span>
+        </a>
+      </li>
+    {% endif %}
+    {% if item.settings.share_pinterest %}
+      <li>
+        <a target="_blank" data-track="social_share" href="//pinterest.com/pin/create/button/?url={{ shop.url | append: share_permalink }}&amp;media={{ share_image | img_url: '1024x1024' }}&amp;description={{ share_title | url_param_escape }}" class="share-pinterest">
+          {% if item.settings.show_official_icons == false %}
+            {% include 'icon_sharing_pinterest' %}
+          {% else %}
+            {% include 'icon_official_sharing_pinterest' %}
+          {% endif %}
+          <span>Pinterest</span>
+        </a>
+      </li>
+    {% endif %}
+    {% if item.settings.share_whatsapp %}
+      <li>
+        <a target="_blank" data-track="social_share" href="//api.whatsapp.com/send/?text={{ shop.url | append: share_permalink }}" class="share-whatsapp">
+          {% if item.settings.show_official_icons == false %}
+            {% include 'icon_sharing_whatsapp' %}
+          {% else %}
+            {% include 'icon_official_sharing_whatsapp' %}
+          {% endif %}
+          <span>WhatsApp</span>
+        </a>
+      </li>
+    {% endif %}
+    {% if item.settings.share_telegram %}
+      <li>
+        <a target="_blank" data-track="social_share" href="//telegram.me/share/url?url={{ shop.url | append: share_permalink }}&text={{ share_title | url_param_escape }}" class="share-telegram">
+          {% if item.settings.show_official_icons == false %}
+            {% include 'icon_sharing_telegram' %}
+          {% else %}
+            {% include 'icon_official_sharing_telegram' %}
+          {% endif %}
+          <span>Telegram</span>
+        </a>
+      </li>
+    {% endif %}
+    {% if item.settings.share_linkedin %}
+      <li>
+        <a target="_blank" data-track="social_share" href="//www.linkedin.com/shareArticle?mini=true&url={{ shop.url | append: share_permalink }}&title={{ share_title | url_param_escape }}&summary=&source=" class="share-linkedin">
+          {% if item.settings.show_official_icons == false %}
+            {% include 'icon_sharing_linkedin' %}
+          {% else %}
+            {% include 'icon_official_sharing_linkedin' %}
+          {% endif %}
+          <span>LinkedIn</span>
+        </a>
+      </li>
+    {% endif %}
+    {% if item.settings.share_reddit %}
+      <li>
+        <a target="_blank" data-track="social_share" href="//www.reddit.com/submit?url={{ shop.url | append: share_permalink }}&title={{ share_title | url_param_escape }}" class="share-reddit">
+          {% if item.settings.show_official_icons == false %}
+            {% include 'icon_sharing_reddit' %}
+          {% else %}
+            {% include 'icon_official_sharing_reddit' %}
+          {% endif %}
+          <span>Reddit</span>
+        </a>
+      </li>
+    {% endif %}
+    {% if item.settings.share_tumblr %}
+      <li>
+        <a target="_blank" data-track="social_share" href="//www.tumblr.com/share/link?url={{ shop.url | append: share_permalink }}&name={{ share_title | url_param_escape }}" class="share-tumblr">
+          {% if item.settings.show_official_icons == false %}
+            {% include 'icon_sharing_tumblr' %}
+          {% else %}
+            {% include 'icon_official_sharing_tumblr' %}
+          {% endif %}
+          <span>Tumblr</span>
+        </a>
+      </li>
+    {% endif %}
+    {% if item.settings.share_line %}
+      <li>
+        <a target="_blank" data-track="social_share" href="//social-plugins.line.me/lineit/share?url={{ shop.url | append: share_permalink }}" class="share-line">
+          {% if item.settings.show_official_icons == false %}
+            {% include 'icon_sharing_line' %}
+          {% else %}
+            {% include 'icon_official_sharing_line' %}
+          {% endif %}
+          <span>Line</span>
+        </a>
+      </li>
+    {% endif %}
+    {% if item.settings.share_email %}
+      <li>
+        <a target="_blank" data-track="social_share" href="mailto:?subject={{ share_title | url_param_escape }}&body={{ shop.url | append: share_permalink }}" class="share-email">
+          {% include 'icon_sharing_email' %}
+          <span>Email</span>
+        </a>
+      </li>
+    {% endif %}
+    {% if item.settings.copy_link %}
+      <li>
+        <a data-track="social_share" href="javascript:void(0)" class="share-copy-link js-copy-link-btn" @tap="SPZ.copy(text='{{ share_url }}');theme-toast.showToast(content='{{ 'i18n.general.share.copy_success' | t }}')">
+          {% include 'icon_sharing_copy_link' %}
+          <span>Copy link</span>
+        </a>
+      </li>
+    {% endif %}
   </ul>
 </spz-tooltip>

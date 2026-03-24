@@ -7,7 +7,7 @@
     product-id="{{card_product.id}}"
     layout="container"
     id="{{form_id}}"
-    @atcSuccess="{{form_id}}__tooltip.close();{{form_id}}__form.clear;{% if template.name != 'cart' %}{% if settings.cart_style == 'drawer' %}cart-drawer-modal.open;{% elsif settings.cart_style == 'to_toast' %}add-card-toast-success.showToast(content='{{ "i18n.product.product_detail.added_to_bag_successfully" | t }}');{% elsif settings.cart_style == 'page' %}SPZ.navigateTo(url='{{ routes.cart_url }}');{% endif %}{% endif %}"
+    @atcSuccess="{{form_id}}__tooltip.close();{{form_id}}__form.clear;"
     @atcError="{{form_id}}__tooltip.close();{{form_id}}__form.clear;theme-toast.showToast(content=event.message);"
     hidden
   >
