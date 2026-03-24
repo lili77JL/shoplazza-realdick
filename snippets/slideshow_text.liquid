@@ -10,15 +10,58 @@
   .lg\:inset-x-\[-98px\] { left: -98px; right: -98px; }
   .lg\:inset-y-\[-50px\] { top: -50px; bottom: -50px; }
 }
-[data-section-id="{{ section.id }}"] .slideshow-mask-{{ forloop.index }} #custom_mask_button {
-  color: {{ item.settings.btn_color }}; 
-  border: 1px solid transparent;
-  background-color: {{ item.settings.btn_bg_color }}; 
+
+/* ── Glossy pill button ── */
+[data-section-id="{{ section.id }}"] .mask_button {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  min-width: 140px;
+  padding: 14px 34px !important;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: #fff !important;
+  border-radius: 9999px !important;
+  border: none !important;
+  cursor: pointer;
+  background:
+    radial-gradient(ellipse 70% 90% at 50% -10%, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.0) 60%),
+    radial-gradient(ellipse 80% 50% at 50% 110%, rgba(255,255,255,0.08) 0%, transparent 60%),
+    linear-gradient(180deg, #f472b6 0%, #ec4899 18%, #db2777 50%, #be185d 100%) !important;
+  box-shadow:
+    0 1px 2px rgba(0,0,0,0.15),
+    0 4px 14px rgba(219,39,119,0.4),
+    inset 0 1px 1px rgba(255,255,255,0.25),
+    inset 0 -2px 4px rgba(0,0,0,0.15) !important;
+  text-shadow: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  margin: 0 !important;
 }
-body[data-button-hover-animation="color_invert"] [data-section-id="{{ section.id }}"] .slideshow-mask-{{ forloop.index }} #custom_mask_button:hover {
-  color: {{ item.settings.btn_bg_color }};
-  border: 1px solid {{ item.settings.btn_bg_color }};
-  background-color: {{ item.settings.btn_color }}; 
+[data-section-id="{{ section.id }}"] .mask_button:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 2px 4px rgba(0,0,0,0.2),
+    0 6px 20px rgba(219,39,119,0.5),
+    inset 0 1px 1px rgba(255,255,255,0.3),
+    inset 0 -2px 4px rgba(0,0,0,0.12) !important;
+}
+
+/* ── Mobile: 2 buttons per row ── */
+@media (max-width: 959px) {
+  [data-section-id="{{ section.id }}"] .slideshow-mask-btn {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 0 !important;
+    padding: 0;
+  }
+  [data-section-id="{{ section.id }}"] .mask_button {
+    width: 100% !important;
+    min-width: unset !important;
+    padding: 12px 16px !important;
+    font-size: 14px;
+  }
 }
 {% endstylesheet %}
 <div class="slideshow-mask-{{ forloop.index }} slideshow-mask-text inset-0 flex overflow-hidden w-full py-12 {% unless section.settings.full_page %} rounded-global-small {% endunless %} lg:py-20 px-[22px] {{container_class}}" 
@@ -47,17 +90,15 @@ body[data-button-hover-animation="color_invert"] [data-section-id="{{ section.id
       <p class="slick_text body-plus-2 leading-1.3 m-0 mb-5 last:mb-0">{{ item.settings.text }}</p>
     {% endif %}
     {% if item.settings.link_text1 or item.settings.link_text2 %}
-      <div class="slideshow-mask-btn flex flex-wrap -mt-3 -ml-3 body-plus-2 leading-1.5 {{slideshow_btn_class}}" style="justify-content: {{ justify_content }};">
+      <div class="slideshow-mask-btn body-plus-2 leading-1.5 {{slideshow_btn_class}}" style="justify-content: center;">
         {% if item.settings.link_text1 %}
           <a
-            {% if item.settings.btn_bg_color and item.settings.btn_color %}id="custom_mask_button"{% endif %}
-            class="mask_button inline-block py-2 px-6 mt-3 ml-3 no-underline whitespace-nowrap rounded-btn button-primary"
+            class="mask_button no-underline whitespace-nowrap"
             {% include 'link', link: item.settings.url1 %}>{{ item.settings.link_text1 }}</a>
         {% endif %}
         {% if item.settings.link_text2 %}
           <a
-          {% if item.settings.btn_bg_color and item.settings.btn_color %}id="custom_mask_button"{% endif %}
-            class="mask_button inline-block py-2 px-6 mt-3 ml-3 no-underline whitespace-nowrap rounded-btn button-primary"
+            class="mask_button no-underline whitespace-nowrap"
             {% include 'link', link: item.settings.url2 %}>{{ item.settings.link_text2 }}</a>
         {% endif %}
       </div>

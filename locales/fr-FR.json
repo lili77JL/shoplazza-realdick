@@ -9,6 +9,9 @@
       "year_ago": "il y a 1 an",
       "years_ago": "{year} il y a des années"
     },
+    "share": {
+      "copy_success": "Copie réussie"
+    },
     "product": {
       "buy_it": "Achète-le",
       "mixed_lot": "À lot mixte",

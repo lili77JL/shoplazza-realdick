@@ -952,15 +952,15 @@
         {
           "type": "checkbox",
           "label": {
-            "zh-CN": "开启PayPal按钮",
-            "en-US": "Show 'PayPal express checkout' button"
+            "zh-CN": "快捷结账按钮",
+            "en-US": "Express checkout button"
           },
           "info": {
-            "zh-CN": "请到<a href='/admin/pay' target='_blank'>付款渠道</a>中配置PayPal",
-            "en-US": "Go to <a href='/admin/pay' target='_blank'>Payment channels</a> to customize PayPal"
+            "zh-CN": "启用快捷结账按钮后，系统将运用智能算法，为当前顾客推荐最为适配的快捷支付方式。若需使用该功能，请先确保已在支付服务商处开通上述支付方式的快捷支付功能。",
+            "en-US": "When the express checkout button is enabled, the system will use intelligent algorithms to recommend the most suitable express payment method for the current customer. To use this feature, please ensure that express checkout has been enabled for the above payment methods with your payment service provider."
           },
           "id": "show_paypal",
-          "default": false
+          "default": true
         }
       ]
     },
@@ -971,7 +971,116 @@
         "en-US": "Social sharing",
         "zh-CN": "社交分享"
       },
-      "settings": []
+      "settings": [
+        {
+          "type": "checkbox",
+          "default": false,
+          "id": "show_official_icons",
+          "label": {
+            "en-US": "Show official icons",
+            "zh-CN": "显示官方图标"
+          }
+        },
+        {
+          "type": "checkbox",
+          "default": true,
+          "id": "share_facebook",
+          "label": {
+            "en-US": "Share on Facebook",
+            "zh-CN": "分享到Facebook"
+          }
+        },
+        {
+          "type": "checkbox",
+          "default": true,
+          "id": "share_twitter",
+          "label": {
+            "en-US": "Tweet on Twitter",
+            "zh-CN": "分享到Twitter"
+          }
+        },
+        {
+          "type": "checkbox",
+          "default": true,
+          "id": "share_pinterest",
+          "label": {
+            "en-US": "Pin on Pinterest",
+            "zh-CN": "分享到Pinterest"
+          }
+        },
+        {
+          "type": "checkbox",
+          "default": false,
+          "id": "share_whatsapp",
+          "label": {
+            "en-US": "Share to WhatsApp",
+            "zh-CN": "分享到WhatsApp"
+          }
+        },
+        {
+          "type": "checkbox",
+          "default": false,
+          "id": "share_telegram",
+          "label": {
+            "en-US": "Share to Telegram",
+            "zh-CN": "分享到Telegram"
+          }
+        },
+        {
+          "type": "checkbox",
+          "default": false,
+          "id": "share_linkedin",
+          "label": {
+            "en-US": "Share to LinkedIn",
+            "zh-CN": "分享到LinkedIn"
+          }
+        },
+        {
+          "type": "checkbox",
+          "default": false,
+          "id": "share_reddit",
+          "label": {
+            "en-US": "Share to Reddit",
+            "zh-CN": "分享到Reddit"
+          }
+        },
+        {
+          "type": "checkbox",
+          "default": false,
+          "id": "share_tumblr",
+          "label": {
+            "en-US": "Share to Tumblr",
+            "zh-CN": "分享到Tumblr"
+          }
+        },
+        {
+          "type": "checkbox",
+          "default": false,
+          "id": "share_line",
+          "label": {
+            "en-US": "Share to Line",
+            "zh-CN": "分享到Line"
+          }
+        },
+        {
+          "type": "checkbox",
+          "default": false,
+          "id": "share_email",
+          "label": {
+            "en-US": "Share to Email",
+            "zh-CN": "分享到Email"
+          } 
+        },
+        {
+          "type": "checkbox",
+          "default": false,
+          "id": "copy_link",
+          "label": {
+            "en-US": "Share link",
+            "zh-CN": "分享链接"
+          }
+        }
+      ]
     },
     {
       "type": "desc",

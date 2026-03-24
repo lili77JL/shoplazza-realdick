@@ -9,6 +9,9 @@
       "year_ago": "1 rok temu",
       "years_ago": "{year} lata temu"
     },
+    "share": {
+      "copy_success": "Skopiowano pomyślnie"
+    },
     "product": {
       "buy_it": "Kup to",
       "mixed_lot": "Mieszana działka",

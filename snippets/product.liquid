@@ -55,6 +55,8 @@
         {% assign card_product_image_height = card_product.image.width %}
       {% when '133.33%' %}
         {% assign card_product_image_height = card_product.image.width | times: 1.3333 %}
+      {% when '75%' %}
+        {% assign card_product_image_height = card_product.image.width | times: 0.75 %}
       {% else %}
         {% assign card_product_image_height = card_product.image.height %}
     {% endcase %}

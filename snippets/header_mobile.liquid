@@ -92,7 +92,7 @@
         ></div>
       </div>
     {% endif %}
-    <div class="flex items-center">
+    <div class="flex items-center" style="position:relative;min-height:40px;">
       {% if template.name == 'cart' %}
         <button
           class="lg:hidden header-cart-back-btn clear flex text-inherit"
@@ -102,27 +102,33 @@
           {% include 'icon_arrow_down_lg' %}
         </button>
       {% endif %}
-      {% render 'header_logo' %}
 
-      {% if search_style == 'icon' or shop.attrs.smart_search == 'open' %}
-        {% render 'header_search', media: media %}
-      {% elsif search_style == 'search_box' and md_enable_sticky %}
-        {% render 'header_search',
-          media: media,
-          is_force_search_icon: true,
-          container_id: 'header-search-container-mobile'
-        %}
-      {% endif %}
+      <i class="flex lg:hidden cursor-pointer" style="flex-shrink:0;z-index:2;" @tap="{{section_prefix}}-announcement.toggleClass(class='header_mask_open', force=true);header_drawer.open()">
+        {% include 'icon_menu' %}
+      </i>
 
-      {% assign is_force_menu_icon = md_enable_sticky %}
-      {% if mb_menu_type == 'drawer' %}
+      <div style="position:absolute;left:50%;transform:translateX(-50%);z-index:1;">
+        {% render 'header_logo' %}
+      </div>
+
+      <div style="margin-left:auto;display:flex;align-items:center;z-index:2;">
+        {% if search_style == 'icon' or shop.attrs.smart_search == 'open' %}
+          {% render 'header_search', media: media %}
+        {% elsif search_style == 'search_box' and md_enable_sticky %}
+          {% render 'header_search',
+            media: media,
+            is_force_search_icon: true,
+            container_id: 'header-search-container-mobile'
+          %}
+        {% endif %}
+
         {% assign is_force_menu_icon = false %}
-      {% endif %}
-      {% render 'header_icons',
-        isShowInsideSearch: false,
-        is_force_menu_icon: is_force_menu_icon,
-        container_id: 'header-icons'
-      %}
+        {% render 'header_icons',
+          isShowInsideSearch: false,
+          is_force_menu_icon: is_force_menu_icon,
+          container_id: 'header-icons'
+        %}
+      </div>
     </div>
   </div>
 

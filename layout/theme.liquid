@@ -1,15 +1,6 @@
 <!doctype html>
 <html class="no-js" lang="{{ shop.locale }}" {% if shop.locale == "ar-SA" %}dir="rtl"{% endif %}>
   <head>
-    <script type="text/javascript" src="https://cdn1.stamped.io/files/widget.min.js"></script>
-<script type="text/javascript">
-//<![CDATA[
-StampedFn.init({
-  apiKey: '399d1bc1-1586-4e46-8fc0-5e112316160a',
-  sId:    '357210'
-});
-//]]>
-</script>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
@@ -53,9 +44,6 @@ StampedFn.init({
       <style>{{settings.custom_css}}</style>
     {% endif %}
     <script async crossorigin="anonymous" src="{{shop.cdn_domain}}cuttlefish/v1/spz.min.js"></script>
-    <!-- TrustBox script -->
-  <script type="text/javascript" src="//widget.trustpilot.com/bootstrap/v5/tp.widget.bootstrap.min.js" async></script>
-  <!-- End TrustBox script -->
   </head>
   {% assign btn_hover_effect = settings.btn_hover_effect | default: 'enlarge_hover' %}
   <body class="nova template-{{template.name}} m-0 type-text-font-family leading-1.3" id="nova-theme" {% if btn_hover_effect %} data-button-hover-animation={{ btn_hover_effect }}{% endif %}>
@@ -87,9 +75,7 @@ StampedFn.init({
         {% include 'breadcrumbs' %}
         {{ content_for_layout }}
       </div>
-    
       {% section 'footer' %}
-     
       {% section 'cart_drawer' %}
     </div>
     {{ content_for_js }}
@@ -97,54 +83,38 @@ StampedFn.init({
     {% include 'toast' %}
     {% include 'add_cart_toast' %}
     {% include 'quick_shop' %}
+    {% include 'atc_event' %}
 
     <script>
-  // 确保所有视频自动循环
-  (function() {
-    // 延迟执行确保所有元素加载完成
-    setTimeout(() => {
-      const videos = document.querySelectorAll('video');
-      
-      videos.forEach(video => {
-        // 设置循环属性
-        video.setAttribute('loop', 'loop');
-        video.setAttribute('muted', 'muted');
-        video.setAttribute('playsinline', 'playsinline');
-        
-        // 尝试自动播放
-        const playAttempt = () => {
-          video.play()
-            .then(() => console.log(`Video ${video.src} is playing`))
-            .catch(e => {
-              console.warn(`Autoplay prevented for ${video.src}:`, e);
-              // 显示播放按钮
-              const playButton = video.nextElementSibling.querySelector('.icon-play');
-              if(playButton) playButton.style.display = 'block';
-            });
-        };
-        
-        // 如果视频已加载
-        if (video.readyState >= 3) {
-          playAttempt();
-        } else {
-          video.addEventListener('loadeddata', playAttempt);
-        }
-        
-        // 结束时重新播放（双重保险）
-        video.addEventListener('ended', () => {
-          video.currentTime = 0;
-          video.play();
+    (function(){
+      function splitTitles(root){
+        (root || document).querySelectorAll('.product-snippet__title a').forEach(function(a){
+          if(a.dataset.split) return;
+          a.dataset.split = '1';
+          var text = a.textContent.trim();
+          var idx = text.indexOf(' ');
+          if(idx > 0 && idx < 20){
+            var first = text.substring(0, idx);
+            var rest = text.substring(idx + 1);
+            a.innerHTML = '<span style="display:block;font-size:16px;font-weight:700;line-height:1.3;margin-bottom:2px;text-align:center;">' + first + '</span><span style="display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;font-size:12px;font-weight:400;line-height:1.3;color:#666;text-align:center;">' + rest + '</span>';
+          }
         });
-      });
-    }, 1000);
-    
-    // 处理Shopify编辑器特殊状态
-    if (window.Shopify && Shopify.designMode) {
-      document.addEventListener('shopify:section:load', () => {
-        location.reload();
-      });
-    }
-  })();
-</script>
+      }
+      function init(){
+        splitTitles();
+        var containers = document.querySelectorAll('.products-grid, .collection-products, .product-list, [class*="product-tab"], [class*="products_tab"], main');
+        var target = containers.length ? containers : [document.getElementById('main') || document.querySelector('main') || document.body];
+        target.forEach(function(el){
+          if(!el) return;
+          new MutationObserver(function(){ splitTitles(el); }).observe(el, {childList:true, subtree:true});
+        });
+      }
+      if(document.readyState === 'loading'){
+        document.addEventListener('DOMContentLoaded', init);
+      } else {
+        init();
+      }
+    })();
+    </script>
   </body>
 </html>

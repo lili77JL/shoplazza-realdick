@@ -55,6 +55,10 @@
               <div {% if isBock %}{{ item.shoplaza_attributes }}{% endif %}>
                 {% include 'cart_checkout_button' %}
               </div>
+            {%  when 'cart_ec_button' %}
+              <div {% if isBock %}{{ item.shoplaza_attributes }}{% endif %}>
+                {% render 'cart_ec_button' %}
+              </div>
             {% else %}
               {% if item.type contains '//apps' %}
                 <div {% if isBock %}{{ item.shoplaza_attributes }}{% endif %}>

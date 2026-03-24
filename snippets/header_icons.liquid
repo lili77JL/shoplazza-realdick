@@ -64,9 +64,5 @@
       </template>
     </spz-render>
   </a>
-  {% if mb_menu_type == 'drawer' or is_force_menu_icon %}
-    <i class="header__drawer_icon {% if is_force_menu_icon %} header__icon-menu--force {% endif %} flex lg:hidden cursor-pointer" @tap="{{section_prefix}}-announcement.toggleClass(class='header_mask_open', force=true);header_drawer.open()">
-      {% include 'icon_menu' %}
-    </i>
-  {% endif %}
+  {% comment %} 已移到 header_mobile.liquid {% endcomment %}
 </div>

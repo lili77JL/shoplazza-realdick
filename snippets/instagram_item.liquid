@@ -12,7 +12,7 @@
   }
   
 {% endstylesheet %}
-<div class='ins_body flex flex-wrap {% if {{enable_carousel}} != true and {{index}} > {{limit}} %} ins_item_hidden {%endif%}'>
+<div class='ins_body flex flex-col {% if {{enable_carousel}} != true and {{index}} > {{limit}} %} ins_item_hidden {%endif%}'>
   <div class='ins_item '>
     <section class='ins_user flex items-center mb-3'>
       <div class='ins_user-image'>

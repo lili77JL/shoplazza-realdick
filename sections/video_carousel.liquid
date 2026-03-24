@@ -1,0 +1,718 @@
+{% comment %}
+  Video Carousel — realdick.com style
+  Features: centered track, drag-to-scroll, arrow nav, scroll snap, play/pause overlay,
+  glossy pill buttons, configurable radius, auto-scroll, video pause on exit
+{% endcomment %}
+
+{% assign block_size = section.blocks.size %}
+{% assign bg_color = section.settings.bg_color | default: '#ffffff' %}
+{% assign card_bg = section.settings.card_bg_color | default: '#000000' %}
+{% assign card_text = section.settings.card_text_color | default: '#ffffff' %}
+{% assign per_mb = section.settings.per_row_mobile | default: 2 %}
+{% assign per_pc = section.settings.per_row_desktop | default: 3 %}
+{% assign ratio = section.settings.video_ratio | default: '133' %}
+{% assign radius = section.settings.video_radius | default: 12 %}
+{% assign interval = section.settings.interval | default: 0 %}
+
+<style>
+  [data-section-id="{{ section.id }}"] .vc-wrap {
+    background-color: {{ bg_color }};
+    padding: 30px 0 40px;
+    overflow: hidden;
+  }
+  @media (min-width: 960px) {
+    [data-section-id="{{ section.id }}"] .vc-wrap { padding: 50px 0 60px; }
+  }
+  [data-section-id="{{ section.id }}"] .vc-heading {
+    text-align: center;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0 auto 24px;
+    color: {{ section.settings.text_color | default: '#1a1a1a' }};
+    width: 100%;
+    max-width: 100%;
+    padding: 0 16px;
+    box-sizing: border-box;
+  }
+  @media (min-width: 960px) {
+    [data-section-id="{{ section.id }}"] .vc-heading { font-size: 32px; margin-bottom: 32px; }
+  }
+
+  [data-section-id="{{ section.id }}"] .vc-track-wrap {
+    position: relative;
+  }
+
+  [data-section-id="{{ section.id }}"] .vc-track {
+    display: flex !important;
+    gap: 12px;
+    overflow-x: scroll !important;
+    overflow-y: hidden !important;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    padding: 0 16px;
+    scroll-padding-left: 16px;
+    scrollbar-width: none;
+    flex-wrap: nowrap !important;
+    touch-action: pan-x;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: fit-content;
+  }
+  [data-section-id="{{ section.id }}"] .vc-track::-webkit-scrollbar { display: none; }
+  [data-section-id="{{ section.id }}"] .vc-track.is-dragging {
+    cursor: grabbing;
+    scroll-snap-type: none;
+  }
+
+  [data-section-id="{{ section.id }}"] .vc-card {
+    flex: none !important;
+    width: 70vw;
+    min-width: 70vw;
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+    border-radius: {{ radius }}px;
+    overflow: hidden;
+  }
+  @media (min-width: 960px) {
+    [data-section-id="{{ section.id }}"] .vc-card {
+      width: 30vw;
+      min-width: 30vw;
+    }
+  }
+
+  [data-section-id="{{ section.id }}"] .vc-media {
+    position: relative;
+    width: 100%;
+    padding-bottom: {{ ratio }}%;
+    overflow: hidden;
+    background: #000;
+    border-radius: {{ radius }}px;
+  }
+  [data-section-id="{{ section.id }}"] .vc-media video,
+  [data-section-id="{{ section.id }}"] .vc-media iframe,
+  [data-section-id="{{ section.id }}"] .vc-media img {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border: 0;
+    pointer-events: none;
+  }
+
+  [data-section-id="{{ section.id }}"] .vc-content {
+    padding: 16px 16px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    flex: 1;
+  }
+  [data-section-id="{{ section.id }}"] .vc-sub {
+    font-size: 13px;
+    opacity: 0.7;
+    margin: 0 0 4px;
+    line-height: 1.3;
+  }
+  [data-section-id="{{ section.id }}"] .vc-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0 0 6px;
+    line-height: 1.2;
+  }
+  @media (min-width: 960px) {
+    [data-section-id="{{ section.id }}"] .vc-title { font-size: 20px; }
+  }
+  [data-section-id="{{ section.id }}"] .vc-text {
+    font-size: 13px;
+    opacity: 0.75;
+    margin: 0 0 16px;
+    line-height: 1.4;
+  }
+
+  /* ── Glossy pill button ── */
+  [data-section-id="{{ section.id }}"] .vc-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 120px;
+    padding: 12px 28px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 9999px;
+    border: none;
+    cursor: pointer;
+    background:
+      radial-gradient(ellipse 70% 90% at 50% -10%, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.0) 60%),
+      radial-gradient(ellipse 80% 50% at 50% 110%, rgba(255,255,255,0.08) 0%, transparent 60%),
+      linear-gradient(180deg, #f472b6 0%, #ec4899 18%, #db2777 50%, #be185d 100%);
+    box-shadow:
+      0 1px 2px rgba(0,0,0,0.15),
+      0 4px 14px rgba(219,39,119,0.4),
+      inset 0 1px 1px rgba(255,255,255,0.25),
+      inset 0 -2px 4px rgba(0,0,0,0.15);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    margin-top: auto;
+  }
+  [data-section-id="{{ section.id }}"] .vc-pill:hover {
+    transform: translateY(-1px);
+    box-shadow:
+      0 2px 4px rgba(0,0,0,0.2),
+      0 6px 20px rgba(219,39,119,0.5),
+      inset 0 1px 1px rgba(255,255,255,0.3),
+      inset 0 -2px 4px rgba(0,0,0,0.12);
+    color: #fff;
+  }
+
+  /* ── Play/Pause button ── */
+  [data-section-id="{{ section.id }}"] .vc-play-btn {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 3;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.6);
+    background: rgba(0,0,0,0.3);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.25s ease, background 0.2s ease;
+    padding: 0;
+    pointer-events: auto;
+  }
+  [data-section-id="{{ section.id }}"] .vc-play-btn:hover {
+    background: rgba(0,0,0,0.5);
+    border-color: rgba(255,255,255,0.8);
+  }
+  [data-section-id="{{ section.id }}"] .vc-play-btn svg {
+    width: 22px;
+    height: 22px;
+    fill: #fff;
+    margin-left: 3px;
+  }
+  [data-section-id="{{ section.id }}"] .vc-play-btn .vc-icon-pause {
+    display: none;
+    margin-left: 0;
+  }
+  [data-section-id="{{ section.id }}"] .vc-play-btn.is-playing .vc-icon-play { display: none; }
+  [data-section-id="{{ section.id }}"] .vc-play-btn.is-playing .vc-icon-pause { display: block; }
+  [data-section-id="{{ section.id }}"] .vc-play-btn.is-playing {
+    opacity: 0;
+  }
+  [data-section-id="{{ section.id }}"] .vc-media:hover .vc-play-btn.is-playing {
+    opacity: 1;
+  }
+
+  /* ── Arrow buttons ── */
+  [data-section-id="{{ section.id }}"] .vc-arrows {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 4;
+  }
+  [data-section-id="{{ section.id }}"] .vc-arrow {
+    position: absolute;
+    top: 35%;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0,0,0,0.5);
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: auto;
+    transition: background 0.2s ease, opacity 0.2s ease;
+    padding: 0;
+    opacity: 0;
+  }
+  [data-section-id="{{ section.id }}"] .vc-track-wrap:hover .vc-arrow {
+    opacity: 1;
+  }
+  @media (max-width: 959px) {
+    [data-section-id="{{ section.id }}"] .vc-arrow {
+      opacity: 0.7;
+      width: 32px;
+      height: 32px;
+    }
+  }
+  [data-section-id="{{ section.id }}"] .vc-arrow:hover {
+    background: rgba(0,0,0,0.75);
+  }
+  [data-section-id="{{ section.id }}"] .vc-arrow svg {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: #fff;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  [data-section-id="{{ section.id }}"] .vc-arrow--prev { left: 20px; }
+  [data-section-id="{{ section.id }}"] .vc-arrow--next { right: 20px; }
+
+  /* ── Scroll dots ── */
+  [data-section-id="{{ section.id }}"] .vc-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 20px;
+  }
+  [data-section-id="{{ section.id }}"] .vc-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: #999;
+    opacity: 0.25;
+    border: none; padding: 0;
+    cursor: pointer;
+    transition: opacity 0.3s;
+  }
+  [data-section-id="{{ section.id }}"] .vc-dot.is-active { opacity: 0.8; background: {{ section.settings.text_color | default: '#DC0D6F' }}; }
+
+  /* ── No-overflow: hide nav & disable scroll when cards fit ── */
+  @media (min-width: 960px) {
+    [data-section-id="{{ section.id }}"] .vc-wrap.vc-no-overflow .vc-track {
+      overflow-x: hidden !important;
+      cursor: default;
+      justify-content: center;
+    }
+    [data-section-id="{{ section.id }}"] .vc-wrap.vc-no-overflow .vc-arrows,
+    [data-section-id="{{ section.id }}"] .vc-wrap.vc-no-overflow .vc-dots {
+      display: none !important;
+    }
+  }
+</style>
+
+<div class="vc-wrap">
+
+  {% if section.settings.heading != blank %}
+    <h2 class="vc-heading page-container">{{ section.settings.heading }}</h2>
+  {% endif %}
+
+  <div class="vc-track-wrap">
+    <div class="vc-track" id="vc-track-{{ section.id }}" data-interval="{{ interval }}">
+      {% for block in section.blocks %}
+        {% assign this_bg = card_bg %}
+        {% if block.settings.card_bg_color != blank and block.settings.card_bg_color != '#FFFFFF' %}
+          {% assign this_bg = block.settings.card_bg_color %}
+        {% endif %}
+
+        {% assign vid_url = block.settings.video_url | strip %}
+        {% assign is_embed = false %}
+        {% if vid_url contains 'iframe' or vid_url contains 'youtube' or vid_url contains 'youtu.be' or vid_url contains 'vimeo' or vid_url contains 'videodelivery' or vid_url contains '.m3u8' %}
+          {% assign is_embed = true %}
+        {% endif %}
+
+        <div class="vc-card" style="background:{{ this_bg }};color:{{ card_text }};" {{ block.shoplaza_attributes }}>
+
+          <div class="vc-media">
+            {% if block.settings.show_play_btn %}
+              <button class="vc-play-btn {% if block.settings.autoplay %}is-playing{% endif %}" type="button" data-vc-play>
+                <svg class="vc-icon-play" viewBox="0 0 24 24"><polygon points="6,3 20,12 6,21"/></svg>
+                <svg class="vc-icon-pause" viewBox="0 0 24 24"><rect x="5" y="3" width="4" height="18"/><rect x="15" y="3" width="4" height="18"/></svg>
+              </button>
+            {% endif %}
+
+            {% if vid_url != blank %}
+              {% if is_embed %}
+                {% assign embed_src = vid_url %}
+                {% if vid_url contains 'videodelivery.net' and vid_url contains 'iframe' %}
+                  {% assign cf_parts = vid_url | split: 'videodelivery.net/' %}
+                  {% if cf_parts[1] %}
+                    {% assign cf_id = cf_parts[1] | split: '/' | first %}
+                    {% assign embed_src = 'https://iframe.videodelivery.net/' | append: cf_id | append: '?autoplay=true&muted=true&loop=true&controls=false' %}
+                  {% endif %}
+                {% elsif vid_url contains 'videodelivery.net' and vid_url contains 'downloads' %}
+                  {% assign is_embed = false %}
+                {% endif %}
+
+                {% if is_embed %}
+                  <iframe
+                    src="{{ embed_src }}"
+                    allow="autoplay; encrypted-media"
+                    allowfullscreen
+                    loading="lazy"
+                    style="border:0;"
+                  ></iframe>
+                {% else %}
+                  <video
+                    {% if block.settings.autoplay %}autoplay muted{% endif %}
+                    {% if block.settings.loop %}loop{% endif %}
+                    playsinline
+                    preload="metadata"
+                    {% if block.settings.poster != blank %}poster="{{ block.settings.poster | img_url }}"{% endif %}
+                  >
+                    <source src="{{ vid_url }}" type="video/mp4">
+                  </video>
+                {% endif %}
+              {% else %}
+                <video
+                  {% if block.settings.autoplay %}autoplay muted{% endif %}
+                  {% if block.settings.loop %}loop{% endif %}
+                  playsinline
+                  preload="metadata"
+                  {% if block.settings.poster != blank %}poster="{{ block.settings.poster | img_url }}"{% endif %}
+                >
+                  <source src="{{ vid_url }}" type="video/mp4">
+                </video>
+              {% endif %}
+            {% elsif block.settings.poster != blank %}
+              <img src="{{ block.settings.poster | img_url }}" alt="{{ block.settings.title | escape }}" loading="lazy">
+            {% else %}
+              <div style="position:absolute;inset:0;background:#333;display:flex;align-items:center;justify-content:center;color:#666;font-size:13px;">No video</div>
+            {% endif %}
+          </div>
+
+          <div class="vc-content">
+            <p class="vc-sub" style="{% if block.settings.subtitle == blank %}display:none;{% endif %}">{{ block.settings.subtitle }}</p>
+            <h3 class="vc-title" style="{% if block.settings.title == blank %}display:none;{% endif %}">{{ block.settings.title }}</h3>
+            <p class="vc-text" style="{% if block.settings.text == blank %}display:none;{% endif %}">{{ block.settings.text }}</p>
+            <a class="vc-pill" href="{{ block.settings.btn_link.url | default: block.settings.btn_link }}" style="{% if block.settings.btn_text == blank %}display:none;{% endif %}">{{ block.settings.btn_text }}</a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    {% if block_size > 1 %}
+      <div class="vc-arrows" id="vc-arrows-{{ section.id }}">
+        <button class="vc-arrow vc-arrow--prev" type="button" data-vc-prev>
+          <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <button class="vc-arrow vc-arrow--next" type="button" data-vc-next>
+          <svg viewBox="0 0 24 24"><polyline points="9 6 15 12 9 18"/></svg>
+        </button>
+      </div>
+    {% endif %}
+  </div>
+
+  {% if block_size > 1 %}
+    <div class="vc-dots" id="vc-dots-{{ section.id }}">
+      {% for block in section.blocks %}
+        <button class="vc-dot {% if forloop.index0 == 0 %}is-active{% endif %}" data-index="{{ forloop.index0 }}"></button>
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>
+
+<script>
+(function(){
+  var track = document.getElementById('vc-track-{{ section.id }}');
+  var dotsWrap = document.getElementById('vc-dots-{{ section.id }}');
+  if(!track) return;
+
+  var wrap = track.closest('.vc-wrap');
+  var cards = track.querySelectorAll('.vc-card');
+  var dots = dotsWrap ? dotsWrap.querySelectorAll('.vc-dot') : [];
+  var interval = parseInt(track.getAttribute('data-interval')) || 0;
+  var timer = null;
+
+  /* ── Check if track overflows and toggle class ── */
+  function checkOverflow(){
+    if(!wrap) return;
+    var tolerance = 2;
+    if(track.scrollWidth <= track.clientWidth + tolerance){
+      wrap.classList.add('vc-no-overflow');
+    } else {
+      wrap.classList.remove('vc-no-overflow');
+    }
+  }
+  checkOverflow();
+  window.addEventListener('resize', function(){ clearTimeout(window._vcResizeTimer); window._vcResizeTimer = setTimeout(checkOverflow, 150); });
+
+  /* ── Update dots ── */
+  function updateDots(){
+    if(!dots.length) return;
+    var cw = cards[0] ? cards[0].offsetWidth + 12 : 1;
+    var idx = Math.round(track.scrollLeft / cw);
+    dots.forEach(function(d,i){ d.classList.toggle('is-active', i===idx); });
+  }
+
+  /* ── Dot click ── */
+  dots.forEach(function(d){
+    d.addEventListener('click', function(){
+      var i = parseInt(d.getAttribute('data-index'));
+      var cw = cards[0] ? cards[0].offsetWidth + 12 : 0;
+      track.scrollTo({left: i*cw, behavior:'smooth'});
+    });
+  });
+
+  /* ── Scroll listener ── */
+  var st;
+  track.addEventListener('scroll', function(){ clearTimeout(st); st=setTimeout(updateDots,80); });
+
+  /* ── Auto-scroll ── */
+  function startAutoScroll(){
+    if(interval>0 && cards.length>1){
+      timer = setInterval(function(){
+        var cw = cards[0]?cards[0].offsetWidth+12:0;
+        var mx = track.scrollWidth - track.clientWidth;
+        var nx = track.scrollLeft + cw;
+        track.scrollTo({left: nx>mx+10?0:nx, behavior:'smooth'});
+      }, interval*1000);
+    }
+  }
+  function stopAutoScroll(){ clearInterval(timer); }
+  startAutoScroll();
+
+  /* ── Drag to scroll (mouse) ── */
+  var isDown = false, startX = 0, scrollLeft = 0, didDrag = false;
+
+  track.addEventListener('mousedown', function(e){
+    isDown = true;
+    didDrag = false;
+    track.classList.add('is-dragging');
+    startX = e.pageX - track.offsetLeft;
+    scrollLeft = track.scrollLeft;
+    stopAutoScroll();
+  });
+
+  track.addEventListener('mouseleave', function(){
+    if(!isDown) return;
+    isDown = false;
+    track.classList.remove('is-dragging');
+    startAutoScroll();
+  });
+
+  track.addEventListener('mouseup', function(){
+    isDown = false;
+    track.classList.remove('is-dragging');
+    startAutoScroll();
+  });
+
+  track.addEventListener('mousemove', function(e){
+    if(!isDown) return;
+    e.preventDefault();
+    var x = e.pageX - track.offsetLeft;
+    var walk = x - startX;
+    if(Math.abs(walk) > 5) didDrag = true;
+    track.scrollLeft = scrollLeft - walk;
+  });
+
+  /* Prevent click after drag */
+  track.addEventListener('click', function(e){
+    if(didDrag){ e.preventDefault(); e.stopPropagation(); didDrag = false; }
+  }, true);
+
+  /* ── Touch drag improvements ── */
+  track.addEventListener('touchstart', function(){ stopAutoScroll(); }, {passive: true});
+  track.addEventListener('touchend', function(){ startAutoScroll(); }, {passive: true});
+
+  /* ── IntersectionObserver: pause off-screen videos ── */
+  if('IntersectionObserver' in window){
+    var obs = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        var v = e.target.querySelector('video');
+        if(!v) return;
+        if(e.isIntersecting){ if(v.hasAttribute('autoplay')) v.play().catch(function(){}); }
+        else { v.pause(); }
+      });
+    },{threshold:0.3});
+    cards.forEach(function(c){ obs.observe(c); });
+  }
+
+  /* ── Play/Pause button ── */
+  track.querySelectorAll('[data-vc-play]').forEach(function(btn){
+    btn.addEventListener('click', function(e){
+      e.stopPropagation();
+      var media = btn.closest('.vc-media');
+      var video = media ? media.querySelector('video') : null;
+      if(!video) return;
+      if(video.paused){
+        video.play().catch(function(){});
+        btn.classList.add('is-playing');
+      } else {
+        video.pause();
+        btn.classList.remove('is-playing');
+      }
+    });
+  });
+
+  /* ── Arrow navigation ── */
+  var prevBtn = document.querySelector('#vc-arrows-{{ section.id }} [data-vc-prev]');
+  var nextBtn = document.querySelector('#vc-arrows-{{ section.id }} [data-vc-next]');
+  function scrollByCard(dir){
+    var cw = cards[0] ? cards[0].offsetWidth + 12 : 0;
+    track.scrollBy({ left: dir * cw, behavior: 'smooth' });
+  }
+  if(prevBtn) prevBtn.addEventListener('click', function(){ scrollByCard(-1); });
+  if(nextBtn) nextBtn.addEventListener('click', function(){ scrollByCard(1); });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "video_carousel",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": { "en-US": "Section heading", "zh-CN": "板块标题" }
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": { "en-US": "Section background", "zh-CN": "板块背景色" },
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": { "en-US": "Heading color", "zh-CN": "标题颜色" },
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "card_bg_color",
+      "label": { "en-US": "Default card background", "zh-CN": "默认卡片背景" },
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "card_text_color",
+      "label": { "en-US": "Card text color", "zh-CN": "卡片文字颜色" },
+      "default": "#ffffff"
+    },
+    {
+      "type": "select",
+      "id": "video_ratio",
+      "label": { "en-US": "Video ratio", "zh-CN": "视频比例" },
+      "default": "133",
+      "options": [
+        { "value": "56.25", "label": "16:9" },
+        { "value": "75", "label": "4:3" },
+        { "value": "100", "label": "1:1" },
+        { "value": "133", "label": "3:4" },
+        { "value": "177", "label": "9:16" }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "video_radius",
+      "label": { "en-US": "Corner radius", "zh-CN": "圆角大小" },
+      "min": 0, "max": 24, "step": 2, "unit": "px", "default": 12
+    },
+    {
+      "type": "range",
+      "id": "per_row_mobile",
+      "label": { "en-US": "Mobile visible cards", "zh-CN": "移动端可见卡片数" },
+      "min": 1, "max": 3, "step": 1, "default": 2
+    },
+    {
+      "type": "range",
+      "id": "per_row_desktop",
+      "label": { "en-US": "Desktop cards per row", "zh-CN": "PC端每行卡片数" },
+      "min": 2, "max": 5, "step": 1, "default": 3
+    },
+    {
+      "type": "range",
+      "id": "interval",
+      "label": { "en-US": "Auto-scroll (0=off)", "zh-CN": "自动滚动（0=关闭）" },
+      "min": 0, "max": 10, "step": 1, "unit": "s", "default": 0
+    }
+  ],
+  "blocks": [
+    {
+      "type": "video_card",
+      "name": { "en-US": "Video card", "zh-CN": "视频卡片" },
+      "settings": [
+        {
+          "type": "textarea",
+          "id": "video_url",
+          "label": { "en-US": "Video URL", "zh-CN": "视频链接" },
+          "info": {
+            "en-US": "Paste .mp4 URL or Cloudflare Stream download URL",
+            "zh-CN": "粘贴 .mp4 链接或 Cloudflare Stream 下载链接"
+          }
+        },
+        {
+          "type": "image_picker",
+          "id": "poster",
+          "label": { "en-US": "Cover image", "zh-CN": "封面图" }
+        },
+        {
+          "type": "checkbox",
+          "id": "autoplay",
+          "label": { "en-US": "Auto-play", "zh-CN": "自动播放" },
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "loop",
+          "label": { "en-US": "Loop", "zh-CN": "循环播放" },
+          "default": true
+        },
+        {
+          "type": "checkbox",
+          "id": "show_play_btn",
+          "label": { "en-US": "Show play/pause button", "zh-CN": "显示播放/暂停按钮" },
+          "default": true
+        },
+        {
+          "type": "color",
+          "id": "card_bg_color",
+          "label": { "en-US": "Card background (override)", "zh-CN": "卡片背景（覆盖）" }
+        },
+        {
+          "type": "text",
+          "id": "subtitle",
+          "label": { "en-US": "Subtitle", "zh-CN": "副标题" }
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": { "en-US": "Title", "zh-CN": "标题" }
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": { "en-US": "Description", "zh-CN": "描述" }
+        },
+        {
+          "type": "text",
+          "id": "btn_text",
+          "label": { "en-US": "Button text", "zh-CN": "按钮文字" },
+          "default": "Shop Now"
+        },
+        {
+          "type": "url",
+          "id": "btn_link",
+          "label": { "en-US": "Button link", "zh-CN": "按钮链接" }
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "video_carousel",
+      "cname": { "en-US": "Video Carousel", "zh-CN": "视频轮播" },
+      "category": { "en-US": "Video", "zh-CN": "视频" },
+      "ccategory": { "en-US": "Video", "zh-CN": "视频" },
+      "display": true,
+      "blocks": [
+        { "type": "video_card", "settings": { "title": "Product Name", "btn_text": "Shop Now", "autoplay": true, "loop": true, "show_play_btn": true } },
+        { "type": "video_card", "settings": { "title": "Product Name", "btn_text": "Shop Now", "autoplay": true, "loop": true, "show_play_btn": true } },
+        { "type": "video_card", "settings": { "title": "Product Name", "btn_text": "Buy Now", "autoplay": true, "loop": true, "show_play_btn": true } }
+      ]
+    }
+  ]
+}
+{% endschema %}

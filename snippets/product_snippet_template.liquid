@@ -14,6 +14,8 @@
         image_height = image_width
       }else if(setting_product_image_display == '133.33%'){
         image_height = image_width * 1.3333;
+      }else if(setting_product_image_display == '75%'){
+        image_height = image_width * 0.75;
       };
       const product_image_hover_on = {{settings.product_image_hover_on | default: false}} && !!secondary_image.src;
       const has_save_label = {{settings.product_label_discount_on | default: false}} && ((+data.compare_at_price) > (+data.price));

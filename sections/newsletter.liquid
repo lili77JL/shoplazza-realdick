@@ -59,7 +59,7 @@
       position: relative;
       width: 100%;
       padding: 30px 24px;
-      background-color: #fff;
+      background-color: var(--color-body-bg);
       box-shadow: 1px 4px 30px rgba(0, 0, 0, .15);
     }
 
@@ -164,7 +164,6 @@
     }
     [data-section-id="{{ section.id }}"] .newsletter-form-email-input[type=text]::placeholder {
       color: {{ section.settings.text_color }};
-      font-size: calc(var(--type-text-font-size) + 2px);
     }
 
     html[dir="rtl"] .newsletter-form-email-input {
@@ -185,7 +184,6 @@
       border: 0;
       padding: 16px 18px;
       line-height: 1;
-      font-size: calc(var(--type-text-font-size) + 4px);
       height: 50px;
       text-align: center;
       cursor: pointer;
@@ -248,9 +246,6 @@
       .newsletter-text {
         font-size: var(--type-text-font-size);
         margin-bottom: 40px;
-      }
-      [data-section-id="{{ section.id }}"] .newsletter-form-submit-btn {
-        font-size: calc(var(--type-text-font-size) + 2px);
       }
     }
 
@@ -369,7 +364,7 @@
        <div class="newsletter">
          {% for item in section.blocks %}
            {% if item.type == 'news_head' and item.settings.heading %}
-             <h3 class="newsletter-heading type-text-font-family" {{ item.shoplaza_attributes }}>
+             <h3 class="newsletter-heading type-heading-font-family" {{ item.shoplaza_attributes }}>
                {{ item.settings.heading }}
              </h3>
            {% elsif item.type == 'news_text' and item.settings.text %}

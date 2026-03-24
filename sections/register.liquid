@@ -100,8 +100,11 @@
       class="form flex flex-col"
       method="POST"
       action-xhr="{{ '/api/customers/sign_up' | add_root_url }}"
-      refresh-when-submit-success
+      back-to-referrer
+      record-referrer
+      record-referrer-ignore="/account/login,/account/register"
       custom-validation="change-interact-and-submit"
+      @submitSuccess="theme-toast-success.showToast(content='{{ "i18n.customers.successfully_registered.success" | t }}')"
       @submitError="form-tips-register.rerender(data=event);"
     >
       <div class="form_item">

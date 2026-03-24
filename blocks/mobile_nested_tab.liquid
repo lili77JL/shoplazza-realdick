@@ -1,0 +1,76 @@
+{% comment %} Mobile nested tab inside accordion - e.g. By Type / By Size {% endcomment %}
+
+{% schema %}
+{
+  "name": "mobile_nested_tab",
+  "limit": 20,
+  "presets": [
+    {
+      "name": "mobile_nested_tab",
+      "cname": {
+        "en-US": "Nested tab",
+        "zh-CN": "嵌套标签"
+      },
+      "category": {
+        "en-US": "Mobile Menu",
+        "zh-CN": "移动菜单"
+      },
+      "display": true
+    }
+  ],
+  "settings": [
+    {
+      "type": "text",
+      "id": "parent_title",
+      "label": {
+        "en-US": "Parent menu title",
+        "zh-CN": "父菜单标题"
+      },
+      "info": {
+        "en-US": "Must match the accordion item title exactly, e.g. Shop All",
+        "zh-CN": "必须和手风琴菜单标题完全一致，如 Shop All"
+      }
+    },
+    {
+      "type": "text",
+      "id": "tab_title",
+      "label": {
+        "en-US": "Tab title",
+        "zh-CN": "标签名称"
+      },
+      "default": "By Type"
+    },
+    {
+      "type": "text",
+      "id": "menu_handle",
+      "label": {
+        "en-US": "Menu ID (numeric)",
+        "zh-CN": "菜单ID（数字）"
+      },
+      "info": {
+        "en-US": "Separate navigation menu numeric ID",
+        "zh-CN": "独立导航菜单的数字ID"
+      }
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": {
+        "en-US": "Layout",
+        "zh-CN": "布局"
+      },
+      "default": "list",
+      "options": [
+        {
+          "value": "list",
+          "label": { "en-US": "List (icon + text)", "zh-CN": "列表（图标+文字）" }
+        },
+        {
+          "value": "grid",
+          "label": { "en-US": "Grid (image cards)", "zh-CN": "网格（图片卡片）" }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

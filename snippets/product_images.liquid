@@ -50,7 +50,7 @@
         effect="scroller"
         initial-slide="{{ initialSlideIndex }}"
         @mounted="product-detail-thumb-buttons.rerender(data=event);"
-        @slideChange="product-detail-images-numbers.rerender(data=event);product-detail-images-bar.rerender(data=event);product-detail-thumb-buttons.rerender(data=event);product-detail-thumb-images.toggle(option=event.index, value=true, isScrollIntoView=true);"
+        @slideChange="product-detail-images-numbers.rerender(data=event);product-detail-images-bar.rerender(data=event);product-detail-thumb-buttons.rerender(data=event);product-detail-thumb-images.toggle(option=event.index, value=true, isScrollIntoView=true, method='scrollTo');"
         @zoomIn="product-detail-gallery-inner.toggleClass(class='zoom-in', force=true);"
         @zoomOut="product-detail-gallery-inner.toggleClass(class='zoom-in', force=false);"
       >
@@ -188,11 +188,24 @@
       {%- comment -%} Sharing {%- endcomment -%}
       {% for item in section.blocks %}
         {% if item.type == 'sharing' %}
-          <button id="product-info-share-btn-mobile" class="lg:hidden product-info-share-btn-mobile" type="button" {{ item.shoplaza_attributes }}>
-            {% include 'icon_share' %}
-          </button>
-
-          {% include 'product_info_share_mobile', for: 'product-info-share-btn-mobile', overlayClass: 'product-info-share-inner' %}
+          {% assign mobile_only_copy_link = false %}
+          {% if item.settings.copy_link %}
+            {% unless item.settings.share_facebook or item.settings.share_twitter or item.settings.share_pinterest or item.settings.share_whatsapp or item.settings.share_telegram or item.settings.share_linkedin or item.settings.share_reddit or item.settings.share_tumblr or item.settings.share_line or item.settings.share_email %}
+              {% assign mobile_only_copy_link = true %}
+            {% endunless %}
+          {% endif %}
+          {% if mobile_only_copy_link %}
+            <button id="product-info-share-btn-mobile-copy-link" class="lg:hidden product-info-share-btn-mobile" type="button" @tap="SPZ.copy(text='{{ shop.url | append: product.url }}');theme-toast.showToast(content='{{ 'i18n.general.share.copy_success' | t }}')" {{ item.shoplaza_attributes }}>
+              {% include 'icon_sharing_copy' %}
+            </button>
+          {% else %}
+            {% if item.settings.share_facebook or item.settings.share_twitter or item.settings.share_pinterest or item.settings.share_whatsapp or item.settings.share_telegram or item.settings.share_linkedin or item.settings.share_reddit or item.settings.share_tumblr or item.settings.share_line or item.settings.share_email %}
+              <button id="product-info-share-btn-mobile" class="lg:hidden product-info-share-btn-mobile" type="button" {{ item.shoplaza_attributes }}>
+                {% include 'icon_share' %}
+              </button>
+              {% include 'product_info_share_mobile', for: 'product-info-share-btn-mobile', overlayClass: 'product-info-share-inner' %}
+            {% endif %}
+          {% endif %}
           {% break %}
         {% endif %}
       {% endfor %}

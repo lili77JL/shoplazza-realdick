@@ -9,6 +9,9 @@
       "year_ago": "1 ปีที่ผ่านมา",
       "years_ago": "{year} ปีที่แล้ว"
     },
+    "share": {
+      "copy_success": "คัดลอกสำเร็จแล้ว"
+    },
     "product": {
       "buy_it": "ซื้อมัน",
       "mixed_lot": "มิกซ์",

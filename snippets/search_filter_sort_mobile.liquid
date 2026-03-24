@@ -269,6 +269,7 @@
   {% include 'search_filter_result', result_id: 'search-filter-result-mobile' %}
 </div>
 
+{% if show_filter %}
 <spz-filter
   id="search-filter-mobile"
   class="lg:hidden"
@@ -285,6 +286,7 @@
   @contentFinish="filter-left-title.rerender(data=event.data);search-filter-view-more-handler-mobile.resetStatus();"
   @beforeContentRender="search-filter-modal-anchor.freeze;"
 ></spz-filter>
+{% endif %}
 
 <spz-sidebar id="search-filter-sidebar" class="filter-sidebar-mobile" hidden layout="nodisplay" side="top" disable-unmount>
   <div class="filter-sort-header-mobile">

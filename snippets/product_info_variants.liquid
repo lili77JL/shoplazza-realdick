@@ -18,25 +18,29 @@
     layout="container"
     id="product-info-variants"
     src="script:product-json"
-    switch-slide='{{ settings.product_image_change_names | json }}'
+    switch-slide="{{ settings.product_image_change_names | join: ',' }}"
     slide="product-detail-images"
     manual
     interference
     select-soldout-suffix=" - {{ 'i18n.product.product_detail.sold_out' | t }}"
+    select-no-exists-suffix=" - {{ 'i18n.products.product.unavailable' | t }}"
     interact="hover"
     inherit-url-variant
     {{ block.shoplaza_attributes }}
   >
     {% for opt in product.options %}
-      {% assign optIdx = forloop.index | prepend: 'option' %}
-      {% assign optName = opt.name | downcase %}
+      {% assign opt_idx = forloop.index | prepend: 'option' %}
+      {% assign opt_name = opt.name | downcase %}
       {% if productSelectedVariant != nil and enable_selected_variants %}
-        {% assign selectedOptValue = productSelectedVariant[optIdx] %}
+        {% assign selected_opt_value = productSelectedVariant[opt_idx] %}
       {% endif %}
 
       {% assign is_thumbnail = false %}
-      {% if product.need_variant_image and thumb_swatch_name == nil and product_swatches_name contains optName %}
-        {% assign thumb_swatch_name = optName %}
+      {% if product.need_variant_image
+        and thumb_swatch_name == nil
+        and product_swatches_name contains opt_name
+      %}
+        {% assign thumb_swatch_name = opt_name %}
         {% assign is_thumbnail = true %}
       {% endif %}
 
@@ -47,16 +51,20 @@
           @mouseout="product-info-selected-variant-option{{ opt.position }}.rerender(data=event, redo=true);"
           @mouseover="product-info-selected-variant-option{{ opt.position }}.rerender(data=event, redo=true);"
         >
-          <legend class="w-full m-0 p-0 flex items-center leading-1.25 product-info__variants_title">
-            <span class="lg:body-plus-2 font-semibold flex-shrink-0">{{ opt.name | escape }}:&nbsp;</span>
+          <legend class="w-full m-0 p-0 flex items-center flex-wrap leading-1.25 product-info__variants_title">
+            <span class="lg:body-plus-2 font-semibold">
+              {{ opt.name | escape }}:&nbsp;</span
+            >
             {% if product_variant_style == 'button' or is_thumbnail %}
               <spz-render
-                class="product-info-selected-variant-option-text inline-block color-body-70 leading-1.3125 lg:body-minus-2 flex-grow inline-flex items-center min-w-[0px]"
+                class="flex-1 color-body-70 leading-1.3125 lg:body-minus-2 flex-grow inline-flex items-center min-w-[0px]"
                 id="product-info-selected-variant-option{{ opt.position }}"
                 layout="container"
                 manual
               >
-                <span class="inline-block truncate max-w-full">{% if selectedOptValue %}{{ selectedOptValue | escape }}{% endif %}</span>
+                <span class="inline-block truncate max-w-full">
+                  {% if selected_opt_value %}{{ selected_opt_value | escape }}{% endif %}
+                </span>
                 <template>
                   ${function(){
                     return `<span class="inline-block truncate max-w-full" title="${data.value}">${data.value}</span>`;
@@ -69,13 +77,13 @@
             {% for value in opt.values %}
               {% assign thumbnailImage = nil %}
               {% for v in product.variants %}
-                {% if optIdx contains "option1" %}
+                {% if opt_idx contains 'option1' %}
                   {% assign optValue = v.option1 %}
                 {% endif %}
-                {% if optIdx contains "option2" %}
+                {% if opt_idx contains 'option2' %}
                   {% assign optValue = v.option2 %}
                 {% endif %}
-                {% if optIdx contains "option3" %}
+                {% if opt_idx contains 'option3' %}
                   {% assign optValue = v.option3 %}
                 {% endif %}
 
@@ -86,27 +94,27 @@
               <div class="relative mt-3 mr-3">
                 <input
                   type="radio"
-                  option="{{ value | escape }}"
                   id="product-info-variant-{{ value | escape }}-{{ forloop.index0 }}"
                   class="pointer-events-auto"
                   name="product-info-variant-{{opt.name}}"
+                  option="{{ value | escape }}"
                   value="{{ value | escape }}"
                   form="product-info-body"
-                  @input-debounced="product-info-selected-variant-{{ optIdx }}.rerender(data=event, redo=true);"
-                  {% if value == selectedOptValue %}
+                  @input-debounced="product-info-selected-variant-{{ opt_idx }}.rerender(data=event, redo=true);"
+                  {% if value == selected_opt_value %}
                     checked
                   {% endif %}
                 >
                 <label
-                  class="product-info-variant-option relative flex items-center break-words flex-shrink-0 overflow-hidden {{ borderRadius }}"
+                  class="product-info-variant-option break-words {{ borderRadius }}"
                   data-type="{% if is_thumbnail %}{% if settings.product_thumb_style == 'image_with_text' %}image-with-text{% else %}image{% endif %}{% else %}text{% endif %}"
                 >
                   {% if is_thumbnail %}
                     <spz-img
                       src="{{ thumbnailImage.src | img_url }}"
                       layout="responsive"
-                      width="44"
-                      height="44"
+                      width="42"
+                      height="42"
                       alt="{{ thumbnailImage.alt }}"
                       object-fit="cover"
                       auto-fit
@@ -115,7 +123,7 @@
                       <span class="break-words">{{ value | escape }}</span>
                     {% endif %}
                   {% else %}
-                    <span class="break-words text-center">{{ value | escape }}</span>
+                    <span class="break-words">{{ value | escape }}</span>
                   {% endif %}
                 </label>
               </div>
@@ -123,8 +131,11 @@
           </div>
         </fieldset>
       {% else %}
+        {% comment %} dropdown style start {% endcomment %}
         <div class="mt-4 lg:mt-5 w-full md:hidden">
-          <span class="lg:body-plus-2 leading-1.25 font-semibold product-info__variants_title">{{ opt.name | escape }}</span>
+          <span class="lg:body-plus-2 leading-1.25 font-semibold product-info__variants_title">
+            {{ opt.name | escape }}
+          </span>
         </div>
         <div class="product-variant-select-container w-full mt-3 {{ borderRadius }}">
           <span class="lg:hidden lg:body-plus-2 leading-1.25 font-semibold product-info__variants_title">
@@ -152,11 +163,12 @@
                 </option>
               {% endfor %}
             </select>
-            {% include 'icon_arrow_down',
-              icon_class: 'product-variant__select-icon flex-shrink-0'
+            {% render 'icon_arrow_down',
+              icon_class: 'product-variant__select-icon'
             %}
           </div>
         </div>
+        {% comment %} dropdown style end {% endcomment %}
       {% endif %}
       <spz-render id="product-variant-option{{opt.position}}-error-tip" manual layout="container">
         <template>

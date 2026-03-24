@@ -9,6 +9,9 @@
       "year_ago": "1年",
       "years_ago": "{year}年前"
     },
+    "share": {
+      "copy_success": "複製成功"
+    },
     "product": {
       "buy_it": "購買",
       "mixed_lot": "混批",
