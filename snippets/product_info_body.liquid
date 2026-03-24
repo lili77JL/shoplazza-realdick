@@ -1,15 +1,15 @@
 <spz-product-form
   id="product-info-body"
-  product-unavailable-status
+  class="product-info-body md:page-container lg:flex-1 lg:w-1/2"
+  layout="container"
+  show-toast
   product-id="{{product.id}}"
   variant-id="{{productSelectedVariant.id}}"
-  layout="container"
-  class="product-info-body md:page-container lg:flex-1 lg:w-1/2"
-  status="{% if productSelectedVariant %}{% if productSelectedVariant.id == nil %}product_unavailable{% elsif productSelectedVariant.available %}available{% else %}soldout{% endif %}{% else %}{% if product.available %}available{% else %}soldout{% endif %}{% endif %}"
+  status="{% if productSelectedVariant %}{% if productSelectedVariant.id == nil %}unavailable{% elsif productSelectedVariant.available %}available{% else %}soldout{% endif %}{% else %}{% if product.available %}available{% else %}soldout{% endif %}{% endif %}"
   @productChange="product-info-quantity.update(value=event.quantity,max=event.max,min=event.min);{% if enableVariantPriceOnAddToCart %}product-info-btn-price.rerender(data=event);{% endif %}product-detail-featured.rerender(data=event);{% if shop.wholesale_enabled %}product-info-prices-wholesale.rerender(data=event);{% else %}product-info-prices.rerender(data=event);{% endif %}{% unless enable_selected_variants %}product-info-variant-empty-option.toggleClass(class='hidden', force=true);{% endunless %}"
-  @atcSuccess="{% if settings.cart_style == 'drawer' %}cart-drawer-modal.open;{% elsif settings.cart_style == 'to_toast' %}add-card-toast-success.showToast(content='{{ "i18n.product.product_detail.added_to_bag_successfully" | t }}');{% elsif settings.cart_style == 'page' %}SPZ.navigateTo(url='{{ routes.cart_url }}');{% endif %}"
   @atcError="theme-toast.showToast(content=event.message);"
   @buyNowError="theme-toast.showToast(content=event)"
+  @productInvalid="product-info-variants.scrollTo(position='center');"
   {% for opt in product.options %}
     @option{{ opt.position | append: 'Invalid' }}="product-variant-option{{opt.position}}-error-tip.rerender(data=event);"
     @option{{ opt.position | append: 'Valid' }}="product-variant-option{{opt.position}}-error-tip.toggleClass(class='hidden', force=true);"
@@ -43,17 +43,12 @@
 
             {% when 'title' %}
               {% assign mobile_product_title_style = block.settings.mobile_product_title_style %}
-              {% assign title_words = product.title | split: ' ' %}
-              {% assign first_word = title_words | first %}
-              {% assign remaining_words = title_words | slice: 1, title_words.size | join: ' ' %}
-              <div class="font-bold">{{ first_word | escape }}</div>
               <h1
-                class="text-bas product-info-title m-0 leading-1.25 type-heading-font-family break-words product-title-color {% if mobile_product_title_style == 'one_line' %} md:truncate {% elsif mobile_product_title_style == 'hide' %} md:hidden {% endif %}"
+                class="product-info-title m-0 mb-2 leading-1.25 type-heading-font-family break-words product-title-color {% if mobile_product_title_style == 'one_line' %} md:truncate {% elsif mobile_product_title_style == 'hide' %} md:hidden {% endif %}"
                 {{ block.shoplaza_attributes }}
               >
-                {{ remaining_words | escape }}
+                {{ product.title | escape }}
               </h1>
-              <div class="text-xs font-bold mt-2 lg:mt-2">Premium Safety Silicone: Non-Toxic & Skin-Safe</div>
             {% when 'subtitle' %}
               {% assign subtitle = product.brief %}
               {% if subtitle %}

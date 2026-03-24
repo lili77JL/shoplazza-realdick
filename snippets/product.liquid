@@ -152,13 +152,9 @@
   {% endif %}
 
   {% comment %} title {% endcomment %}
-  {% assign title_words = card_product.title | split: ' ' %}
-  {% assign first_word = title_words | first %}
-  {% assign remaining_words = title_words | slice: 1, title_words.size | join: ' ' %}
-  <div class="font-bold">{{ first_word | escape }}</div>
   <h3 class="product-snippet__title dj_skin_product_list_title m-0 mt-2 p-0 body-base leading-1.25 type-heading-font-family product-title-color {% if settings.hide_mobile_product_title %} md:hidden {% endif %} {% if settings.product_title_style == 'one_line' %} line-clamp-1 {% endif %}">
     <a class="text-inherit no-underline" {{ href }}>
-      {{ remaining_words | escape }}
+      {{ card_product.title | escape }}
     </a>
   </h3>
 
